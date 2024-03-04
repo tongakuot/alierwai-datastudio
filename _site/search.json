@@ -1,73 +1,10 @@
 [
   {
-    "objectID": "tutorials/posts/2024/01/04/case_when_example.html",
-    "href": "tutorials/posts/2024/01/04/case_when_example.html",
-    "title": "Showcasing dplyr case_when() Function",
-    "section": "",
-    "text": "While reading Effective Pandas 2 by Matt Harrison, I learned about the new case_when() method in Pandas 2, which is a total life changer for pandas users who have longed for such a function for a long time. However, as an R programmer, I decided to review the dplyr case_when() documentation and learned that this lifesaving function has been updated. The recently released version of the case_when() function now includes the following arguments:\n\ncase_when(…, .default = NULL, .ptype = NULL, .size = NULL)\n\nYou can read more about these arguments here!\nThe most notable change is the replacement of TRUE ~ some value with .default = some value argument."
-  },
-  {
-    "objectID": "tutorials/posts/2024/01/04/case_when_example.html#loading-the-required-libraries",
-    "href": "tutorials/posts/2024/01/04/case_when_example.html#loading-the-required-libraries",
-    "title": "Showcasing dplyr case_when() Function",
-    "section": "Loading the Required Libraries",
-    "text": "Loading the Required Libraries\nWe will load the entire tidyverse package for this tutorial, although we will only use the dplyr and stringr packages. Additionally, we will suppress warnings and notifications by setting warning and message to false, respectively.\n\nlibrary(tidyverse)"
-  },
-  {
-    "objectID": "tutorials/posts/2024/01/04/case_when_example.html#importing-dataset",
-    "href": "tutorials/posts/2024/01/04/case_when_example.html#importing-dataset",
-    "title": "Showcasing dplyr case_when() Function",
-    "section": "Importing dataset",
-    "text": "Importing dataset\n\nssd_census_2008 &lt;-\n  vroom::vroom(\n    \"ss_2008_census_data_raw.csv\",\n    show_col_types = FALSE\n  ) |&gt;\n  select(\n    state        = `Region Name`,\n    gender       = `Variable Name`,\n    age_category = `Age Name`,\n    population   = `2008`\n  ) |&gt;\n  filter(\n    !is.na(gender),\n    age_category != \"Total\"\n  )\n\n\n# Showcase case_when() function\ncase_when_tbl &lt;- \n  ssd_census_2008 |&gt; \n  mutate(\n    state = state |&gt; str_to_lower(),\n    former_region = case_when(\n      str_detect(state, \"equatoria\")  ~ \"Greater Equatoria\",\n      str_detect(state, \"upper nile\") ~ \"Greater Upper Nile\",\n      str_detect(state, \"unity\")      ~ \"Greater Upper Nile\",\n      str_detect(state, \"jonglei\")    ~ \"Greater Upper Nile\",\n      .default = \"Greater Bahr el Ghazal\"\n    )\n  ) |&gt;\n  mutate(\n    age_category = case_when(\n      age_category %in% c(\"0 to 4\", \"5 to 9\", \"10 to 14\") ~ \"0-14\",\n      age_category %in% c(\"15 to 19\", \"20 to 24\") ~ \"15-24\",\n      age_category %in% c(\"25 to 29\", \"30 to 34\") ~ \"25-34\",\n      age_category %in% c(\"35 to 39\", \"40 to 44\") ~ \"35-44\",\n      age_category %in% c(\"45 to 49\", \"50 to 54\") ~ \"45-54\",\n      age_category %in% c(\"55 to 59\", \"60 to 64\") ~ \"55-64\",\n      .default = \"65+\"\n    )\n  ) |&gt; \n  \n  # Group by and summarization\n  summarize(\n    population = sum(population),\n    .by = c(former_region, state, gender, age_category)\n  )"
-  },
-  {
-    "objectID": "tutorials/posts/2024/01/04/case_when_example.html#case_match-example",
-    "href": "tutorials/posts/2024/01/04/case_when_example.html#case_match-example",
-    "title": "Showcasing dplyr case_when() Function",
-    "section": "case_match() Example",
-    "text": "case_match() Example\nAccording to the dplyr website, the case_match() function is a “general vectorized switch().” Below is a summary from the website:\n\nThis function allows you to vectorise multiple switch() statements. Each case is evaluated sequentially and the first match for each element determines the corresponding value in the output vector. If no cases match, the .default is used. case_match() is an R equivalent of the SQL “simple” CASE WHEN statement.\n\n\nConnection to case_when() While case_when() uses logical expressions on the left-hand side of the formula, case_match() uses values to match against .x with.\n\n\n# Showcase case_match() function\ncase_match_tbl &lt;- \n  ssd_census_2008 |&gt; \n  # add former regions of South Sudan\n  mutate(\n    state = str_to_lower(state),\n    # former regions\n    former_region = case_match(\n      state,\n      c(\"unity\", \n        \"upper nile\", \n        \"jonglei\"\n      )                         ~ \"Greater Upper Nile\",\n      c(\"central equatoria\", \n        \"western equatoria\", \n        \"eastern equatoria\"\n        )                       ~ \"Greater Equatoria\",\n      .default = \"Greater Bahr el Ghazal\"\n    ),\n    # age category\n    age_category = case_match(\n      age_category,\n      c(\"0 to 4\", \"5 to 9\", \"10 to 14\") ~ \"0-14\",\n      c(\"15 to 19\", \"20 to 24\")         ~ \"15-24\",\n      c(\"25 to 29\", \"30 to 34\")         ~ \"25-34\",\n      c(\"35 to 39\", \"40 to 44\")         ~ \"35-44\",\n      c(\"45 to 49\", \"50 to 54\")         ~ \"45-54\",\n      c(\"55 to 59\", \"60 to 64\")         ~ \"55-64\",\n      .default = \"65+\"\n    )\n  )"
-  },
-  {
-    "objectID": "tutorials/posts/2024/01/04/case_when_example.html#tidying-column-values-with-the-separate-variants",
-    "href": "tutorials/posts/2024/01/04/case_when_example.html#tidying-column-values-with-the-separate-variants",
-    "title": "Showcasing dplyr case_when() Function",
-    "section": "Tidying Column Values with the separate() variants",
-    "text": "Tidying Column Values with the separate() variants\n\n# Showcase the separate() function\nseparate_census_tbl &lt;- \n  case_match_tbl |&gt; \n  # Separating a character column into multiple columns\n  # gender column has these unique values: \n  # \"Population, Total (Number)\",  \n  # \"Population, Male (Number)\", \n  #\"Population, Female (Number)\"\n  separate_wider_delim(\n    gender,\n    delim    = \" \", \n    names    = c(NA, \"gender\"), \n    too_many = \"drop\"\n  ) |&gt;\n  filter(gender != \"Total\") |&gt;\n  # filter(!(gender == \"Total\"))\n  # Group by and summarization\n  summarize(\n    population = sum(population),\n    .by = c(former_region, state, gender, age_category)\n  )"
-  },
-  {
     "objectID": "latest-articles.html",
     "href": "latest-articles.html",
     "title": "Latest Articles",
     "section": "",
     "text": "Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n         \n          Author\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\nShowcasing the dplyr case_when() and case_match() Functions\n\n\n\nData Science\n\n\nData Wrangling\n\n\nR\n\n\n\nWhile reading Effective Pandas 2 by Matt Harrison, I learned about the new .case_when method in Pandas 2, which is a total life changer for pandas users who have longed for…\n\n\n\nAlier Reng\n\n\nJan 4, 2024\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNavigating Data Science: A Comprehensive Analysis of Calgary Crime Data using R\n\n\n\nData Science\n\n\nR\n\n\nData Wrangling,\n\n\nProject,\n\n\nCrime Trends,\n\n\nData Analytics\n\n\n\nIn this article, we will use Calgary crime data obtained from the Calgary website for our project. Here, you’ll find valuable insights, tutorials, and real-world examples…\n\n\n\nAlier Reng\n\n\nNov 11, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSolving R 4 Data Science, 2nd-edition: Section 25.3.5 Exercises.\n\n\n\nData Science\n\n\nR\n\n\nTutorial\n\n\n\nTo practice R programming through hands-on exercises, as it is the best way to enhance your programming skills. In this tutorial, we will solve problems from Section 25.3.5…\n\n\n\nAlier Reng\n\n\nNov 11, 2023\n\n\n\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "tutorials/index.html",
-    "href": "tutorials/index.html",
-    "title": "Tutorials",
-    "section": "",
-    "text": "Whether you’re an aspiring data scientist/analyst or a seasoned data science professional, my data science tutorials are designed to improve your R and Python coding skills. I assist aspiring and accomplished data scientists by offering tailored content based on the most up-to-date coding best practices. I strive to get you up and running and empower you to excel in your data science pursuits. Explore my tutorials and join my vibrant community of learners dedicated to continuous skill improvement.\n\n\n\n\n\n\n\n\n  \n\n\n\n\nShowcasing the dplyr case_when() and case_match() Functions\n\n\n\n\n\n\n\nData Science\n\n\nData Wrangling\n\n\nR\n\n\n\n\nWhile reading Effective Pandas 2 by Matt Harrison, I learned about the new .case_when method in Pandas 2, which is a total life changer for pandas users who have longed for such a function for a long time. However, as an R programmer, I decided to review the dplyr case_when() documentation and learned that this “lifesaving” function has been updated.\n\n\n\n\n\n\nJan 4, 2024\n\n\nAlier Reng\n\n\n\n\n\n\n  \n\n\n\n\nSolving R 4 Data Science, 2nd-edition: Section 25.3.5 Exercises.\n\n\n\n\n\n\n\nData Science\n\n\nR\n\n\nTutorial\n\n\n\n\nTo practice R programming through hands-on exercises, as it is the best way to enhance your programming skills. In this tutorial, we will solve problems from Section 25.3.5 of the famous R 4 Data Science by Hadley Wickham et al.\n\n\n\n\n\n\nNov 11, 2023\n\n\nAlier Reng\n\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "about-us.html",
-    "href": "about-us.html",
-    "title": "Welcome to Alierwai DataStudio!",
-    "section": "",
-    "text": "Alierwai DataStudio is a platform for knowledge sharing and continuous learning. With a focus on data science tutorials, statistics, and mathematics, it aims to inspire and empower individuals to enhance their skills and achieve their goals.\nI am deeply passionate about the transformative power of data science, healthcare analytics, and statistics. With proficiency in R and Python programming languages, I aspire to make a positive impact on the lives of individuals worldwide, especially in my home country of South Sudan. Despite limited resources, I am committed to helping others learn data science, statistics, and mathematics from anywhere, at any time. Through my exceptional tutoring and mentorship services, I aim to empower individuals to achieve their data science goals and secure promising career opportunities in today’s rapidly evolving job market."
-  },
-  {
-    "objectID": "about-us.html#mission-statement",
-    "href": "about-us.html#mission-statement",
-    "title": "Welcome to Alierwai DataStudio!",
-    "section": "Mission Statement",
-    "text": "Mission Statement\nPromoting data literacy through advanced training, consulting, tutoring in statistics and mathematics, and mentorship."
-  },
-  {
-    "objectID": "about-us.html#vision-statement",
-    "href": "about-us.html#vision-statement",
-    "title": "Welcome to Alierwai DataStudio!",
-    "section": "Vision Statement",
-    "text": "Vision Statement\nI strive to impart knowledge and train the next generation of data scientists and analysts to help them unlock their full potential and positively impact the world."
   },
   {
     "objectID": "contact.html",
@@ -84,11 +21,11 @@
     "text": "At ADS, our goal is to provide you with the essential skills necessary to advance your data science career. We understand that navigating through the vast amount of data science content available online can be overwhelming, and that’s why we strive to help you identify relevant and valuable information to achieve your goals. To become a successful data scientist or analyst, you need guidance and mentorship from industry experts who have demonstrated their abilities on real-world data science projects. At ADS, we offer you the opportunity to explore your potential and embark on a journey toward a fulfilling career in data science.\nEmail: info@alierwaidatastudio.com\nGitHub: @tongakuot\nFacebook: @NileQuantumInsights\nLinkedIn: @tongakuot"
   },
   {
-    "objectID": "case-studies/index.html",
-    "href": "case-studies/index.html",
-    "title": "Case studies",
+    "objectID": "talks/index.html",
+    "href": "talks/index.html",
+    "title": "Talks",
     "section": "",
-    "text": "At ADS, we take pride in showcasing our data science expertise through impactful case studies using real-world data. In the 21st century, where word of mouth alone is insufficient, we understand the importance of providing practical examples. On this page, our work speaks for itself, demonstrating what we know and how our data solutions and services deliver tangible value. These case studies are more than just projects; they are a testament to our commitment to excellence and a foundation for building trust in our capabilities.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNavigating Data Science: A Comprehensive Analysis of Calgary Crime Data using R\n\n\n\nData Science\n\n\nR\n\n\nData Wrangling,\n\n\nProject,\n\n\nCrime Trends,\n\n\nData Analytics\n\n\n\nIn this article, we will use Calgary crime data obtained from the Calgary website for our project. Here, you’ll find valuable insights, tutorials, and real-world examples…\n\n\n\nAlier Reng\n\n\nNov 11, 2023\n\n\n\n\n\n\n\n\nNo matching items"
+    "text": "While ADS primarily focuses on healthcare analytics, data science tutorials, statistics, and mathematics, we extend our commitment to education through personalized tutoring and mentorship services. Our comprehensive tutoring program encompasses various statistics and mathematics courses, including plane trigonometry, college algebra, finite mathematics, mathematical ideas, calculus 1 and 2, pre-calculus, and data science with R and Python. At ADS, we believe in nurturing a learning environment beyond traditional boundaries, ensuring individuals have access to the support they need to excel in their academic and professional pursuits.\n\n\n\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "case-studies/posts/2023/10/18/calgary_crime_analysis.html",
@@ -168,11 +105,74 @@
     "text": "Key Findings:\nIn our analysis of crime activities by Sector and Month, we discovered that the Centre and Northeast sectors exhibited higher trends in crime activities. Notably, all Calgary communities experienced fluctuations in crime activities throughout the past 6-plus years, while the West Sector consistently maintained the lowest crime activities among all Calgary communities. Additionally, the Northwest overtook the East Sector in October 2021 and remained higher until April 2023.\nOur examination of Calgary Crime Activities by Month and Category revealed intriguing trends. Robbery activities, both commercial and street, consistently remained at lower levels than other crime categories over the past 6.75 years. In contrast, theft (both from and of vehicles) always maintained high levels. Furthermore, after a brief decline between October 2020 and February 2021, Calgary’s crime activities began to increase, but they appear to be declining again toward the end of 2023. Additionally, non-domestic violence surpassed break & enter in January 2022 and has remained above ever since.\nIn conclusion, this project embodies my commitment to supporting aspiring data professionals and showcasing my data science expertise. Whether you are embarking on your data science journey or looking to enhance your skills, my content will equip you with the tools and knowledge needed to effectively tackle data science projects.\nTogether, we have unveiled the boundless possibilities the world of data science in R offers. I invite you to join me on this exhilarating journey through the art and science of data, where we can continue exploring the captivating realm of data science with unwavering confidence. To explore more in-depth tutorials and engage with our community, I invite you to follow my YouTube channel (@AlierwaiDataStudio) and blog (www.alierwai.org), where our data science adventure continues."
   },
   {
-    "objectID": "talks/index.html",
-    "href": "talks/index.html",
-    "title": "Talks",
+    "objectID": "case-studies/index.html",
+    "href": "case-studies/index.html",
+    "title": "Case studies",
     "section": "",
-    "text": "While ADS primarily focuses on healthcare analytics, data science tutorials, statistics, and mathematics, we extend our commitment to education through personalized tutoring and mentorship services. Our comprehensive tutoring program encompasses various statistics and mathematics courses, including plane trigonometry, college algebra, finite mathematics, mathematical ideas, calculus 1 and 2, pre-calculus, and data science with R and Python. At ADS, we believe in nurturing a learning environment beyond traditional boundaries, ensuring individuals have access to the support they need to excel in their academic and professional pursuits.\n\n\n\n\n\n\n\n\n\nNo matching items"
+    "text": "At ADS, we take pride in showcasing our data science expertise through impactful case studies using real-world data. In the 21st century, where word of mouth alone is insufficient, we understand the importance of providing practical examples. On this page, our work speaks for itself, demonstrating what we know and how our data solutions and services deliver tangible value. These case studies are more than just projects; they are a testament to our commitment to excellence and a foundation for building trust in our capabilities.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNavigating Data Science: A Comprehensive Analysis of Calgary Crime Data using R\n\n\n\nData Science\n\n\nR\n\n\nData Wrangling,\n\n\nProject,\n\n\nCrime Trends,\n\n\nData Analytics\n\n\n\nIn this article, we will use Calgary crime data obtained from the Calgary website for our project. Here, you’ll find valuable insights, tutorials, and real-world examples…\n\n\n\nAlier Reng\n\n\nNov 11, 2023\n\n\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "about-us.html",
+    "href": "about-us.html",
+    "title": "Welcome to Alierwai DataStudio!",
+    "section": "",
+    "text": "Alierwai DataStudio is a platform for knowledge sharing and continuous learning. With a focus on data science tutorials, statistics, and mathematics, it aims to inspire and empower individuals to enhance their skills and achieve their goals.\nI am deeply passionate about the transformative power of data science, healthcare analytics, and statistics. With proficiency in R and Python programming languages, I aspire to make a positive impact on the lives of individuals worldwide, especially in my home country of South Sudan. Despite limited resources, I am committed to helping others learn data science, statistics, and mathematics from anywhere, at any time. Through my exceptional tutoring and mentorship services, I aim to empower individuals to achieve their data science goals and secure promising career opportunities in today’s rapidly evolving job market."
+  },
+  {
+    "objectID": "about-us.html#mission-statement",
+    "href": "about-us.html#mission-statement",
+    "title": "Welcome to Alierwai DataStudio!",
+    "section": "Mission Statement",
+    "text": "Mission Statement\nPromoting data literacy through advanced training, consulting, tutoring in statistics and mathematics, and mentorship."
+  },
+  {
+    "objectID": "about-us.html#vision-statement",
+    "href": "about-us.html#vision-statement",
+    "title": "Welcome to Alierwai DataStudio!",
+    "section": "Vision Statement",
+    "text": "Vision Statement\nI strive to impart knowledge and train the next generation of data scientists and analysts to help them unlock their full potential and positively impact the world."
+  },
+  {
+    "objectID": "tutorials/posts/2024/01/04/tutorial-02.html",
+    "href": "tutorials/posts/2024/01/04/tutorial-02.html",
+    "title": "Showcasing the dplyr case_when() and case_match() Functions",
+    "section": "",
+    "text": "While reading Effective Pandas 2 by Matt Harrison, I learned about the new .case_when() method in Pandas 2, which is a total life changer for pandas users who have longed for such a function for a long time. However, as an R programmer, I decided to review the dplyr case_when() documentation and learned that this lifesaving function has been updated. The recently released version of the case_when() function now includes the following arguments:\n\ncase_when(…, .default = NULL, .ptype = NULL, .size = NULL)\n\nYou can read more about case_when() function here!"
+  },
+  {
+    "objectID": "tutorials/posts/2024/01/04/tutorial-02.html#loading-the-required-libraries",
+    "href": "tutorials/posts/2024/01/04/tutorial-02.html#loading-the-required-libraries",
+    "title": "Showcasing the dplyr case_when() and case_match() Functions",
+    "section": "Loading the Required Libraries",
+    "text": "Loading the Required Libraries\nWe will load the entire tidyverse meta-package (which contains 9 packages) for this tutorial, although we will only use the dplyr, tidyr, and stringr packages. Additionally, we will suppress warnings and notifications by setting the warning and message options to false, respectively.\n\nlibrary(tidyverse)"
+  },
+  {
+    "objectID": "tutorials/posts/2024/01/04/tutorial-02.html#loading-the-dataset",
+    "href": "tutorials/posts/2024/01/04/tutorial-02.html#loading-the-dataset",
+    "title": "Showcasing the dplyr case_when() and case_match() Functions",
+    "section": "Loading the dataset",
+    "text": "Loading the dataset\nWe will use the vroom package instead of the readr package to load the South Sudan 2008 census dataset. Even though our dataset is too small for the speed to matter, vroom is faster than readr.\n\n# Load the data -----------------\nssd_census_2008 &lt;-\n  vroom::vroom(\n    \"ss_2008_census_data_raw.csv\",\n    show_col_types = FALSE\n  ) |&gt;\n  select(\n    state        = `Region Name`,\n    gender       = `Variable Name`,\n    age_category = `Age Name`,\n    population   = `2008`\n  ) |&gt;\n  filter(\n    !is.na(gender),\n    age_category != \"Total\"\n  )"
+  },
+  {
+    "objectID": "tutorials/posts/2024/01/04/tutorial-02.html#tidying-column-values-with-the-separate-variants",
+    "href": "tutorials/posts/2024/01/04/tutorial-02.html#tidying-column-values-with-the-separate-variants",
+    "title": "Showcasing the dplyr case_when() and case_match() Functions",
+    "section": "Tidying Column Values with the separate() variants",
+    "text": "Tidying Column Values with the separate() variants\nIn this section, we’ll demonstrate how to use the separate_wider_delim() function, the most commonly used of the two variants of the separate() function. First, we will show how we solved the same problem previously and then show the updated variant.\n\nWe are trying to solve\nHere, we aim to separate the gender column into three new columns but only keep the middle column with gender rows. Here are the unique values currently in the gender column: “Population, Total (Number),” “Population, Male (Number),” and “Population, Female (Number).”"
+  },
+  {
+    "objectID": "tutorials/posts/2024/01/04/tutorial-02.html#before",
+    "href": "tutorials/posts/2024/01/04/tutorial-02.html#before",
+    "title": "Showcasing the dplyr case_when() and case_match() Functions",
+    "section": "Before",
+    "text": "Before\n\n# Showcase the separate() function\nseparate_before_tbl &lt;-\n  case_match_tbl |&gt;\n  # Split gender column into: pop, gender, and other\n  separate(\n    col = gender, \n    into = c(\"pop\", \"gender\", \"other\"), \n    sep = \" \"\n  ) |&gt;\n  # Remove extra/unwanted columns\n  select(-pop, -other) |&gt; \n  # Remove the total rows\n  filter(gender != \"Total\") |&gt;\n  # Group by and summarization\n  summarize(\n    population = sum(population),\n    .by = c(former_region, state, gender, age_category)\n  )\n\nThe separate() function handles additional pieces with the extra argument, which can be set to either “warn,” “drop,” or “merge.” However, if there are fewer pieces, then separate() handles them with the fill argument, which can be set to either “warn” (this is the default option; it emits a warning and fills in the missing pieces from the right), “right” (‘fill with missing values on the right’), and “left” (‘fill with missing values on the left’)."
+  },
+  {
+    "objectID": "tutorials/posts/2024/01/04/tutorial-02.html#now",
+    "href": "tutorials/posts/2024/01/04/tutorial-02.html#now",
+    "title": "Showcasing the dplyr case_when() and case_match() Functions",
+    "section": "Now",
+    "text": "Now\n\n# Showcase the separate() function\nseparate_wider_delim_tbl &lt;-\n  case_match_tbl |&gt;\n  # Split gender column\n  separate_wider_delim(\n    gender,\n    delim    = \" \",\n    names    = c(NA, \"gender\"),\n    too_many = \"drop\" # drop extra column\n  ) |&gt;\n  # Remove the total rows\n  filter(gender != \"Total\") |&gt;\n  # Group by and summarization\n  summarize(\n    population = sum(population),\n    .by = c(former_region, state, gender, age_category)\n  )"
   },
   {
     "objectID": "tutorials/posts/2023/11/11/tutorial-01.html",
@@ -180,6 +180,13 @@
     "title": "Solving R 4 Data Science, 2nd-edition: Section 25.3.5 Exercises.",
     "section": "",
     "text": "Motivation\nTo practice R programming through hands-on exercises, as it is the best way to enhance your programming skills.\nIn this tutorial, we will solve problems from Section 25.3.5 of the famous R 4 Data Science by Hadley Wickham et al. Let’s get started!\n\n\nLoading Required Libraries\nIn this section, we will load tidyverse and nycflights13 packages. We will set warning and message to false to suppress warnings and notifications.\n\n# Libraries\nlibrary(tidyverse)\nlibrary(nycflights13)\n\n\n\nSection 25.3.5 Exercises\n\nUsing the datasets from nycflights13, write a function that:\n\n\nFinds all flights that were cancelled (i.e. is.na(arr_time)) or delayed by more than an hour. About the author\n\n\n # Subset flights data\ncanceled_or_delayed_flights &lt;- \n    flights |&gt;\n  filter(is.na(arr_time) | dep_delay &gt; 1)\n\n# Write a function\nfilter_severe &lt;- function(data, condition) {\n  data |&gt;\n    filter({{ condition }})\n}\n\n# Let's test our function\ncanceled_or_delayed_flights &lt;- \n    flights |&gt; \n    filter_severe(is.na(arr_time) | dep_delay &gt; 1)\n\n# Display the results\ncanceled_or_delayed_flights |&gt; \n    slice_head(n = 5) |&gt; \n    knitr::kable(align = \"c\")\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nyear\nmonth\nday\ndep_time\nsched_dep_time\ndep_delay\narr_time\nsched_arr_time\narr_delay\ncarrier\nflight\ntailnum\norigin\ndest\nair_time\ndistance\nhour\nminute\ntime_hour\n\n\n\n\n2013\n1\n1\n517\n515\n2\n830\n819\n11\nUA\n1545\nN14228\nEWR\nIAH\n227\n1400\n5\n15\n2013-01-01 05:00:00\n\n\n2013\n1\n1\n533\n529\n4\n850\n830\n20\nUA\n1714\nN24211\nLGA\nIAH\n227\n1416\n5\n29\n2013-01-01 05:00:00\n\n\n2013\n1\n1\n542\n540\n2\n923\n850\n33\nAA\n1141\nN619AA\nJFK\nMIA\n160\n1089\n5\n40\n2013-01-01 05:00:00\n\n\n2013\n1\n1\n608\n600\n8\n807\n735\n32\nMQ\n3768\nN9EAMQ\nEWR\nORD\n139\n719\n6\n0\n2013-01-01 06:00:00\n\n\n2013\n1\n1\n611\n600\n11\n945\n931\n14\nUA\n303\nN532UA\nJFK\nSFO\n366\n2586\n6\n0\n2013-01-01 06:00:00\n\n\n\n\n\nIn the code snippet above, we first wrote the code for solving the problem and then converted our code into a function as instructed. Next, we tested our function to ensure that it works as expected.\n\nCounts the number of cancelled flights and the number of flights delayed by more than an hour.\n\n\n# Write a function\nsummarize_severe &lt;- function(data, var) {\n  data |&gt;\n    summarize(\n      n = sum({{ var }})\n    )\n}\n\n# Test the function\ndf_0 &lt;- flights |&gt;\n  group_by(dest) |&gt;\n  summarize_severe(is.na(arr_time) | dep_delay &gt; 1)\n\n# OR ------------------------------------------------\n\n# We could do this:\nsummarise_severe &lt;- function(data, group_var, var) {\n  data |&gt;\n    summarize(\n      total = sum({{ var }}),\n      .by = {{ group_var }}\n    )\n}\n\n# Test the second function\ndf_1 &lt;-\n  summarise_severe(\n    flights,\n    var = c(is.na(arr_time) | dep_delay &gt; 1),\n    group_var = dest\n  )\n\nIn the code snippet above, we solved a problem using two approaches. Firstly, we defined the function summarize_severe() and used it along with the group_by() function to calculate the total number of canceled flights and flights delayed by over one hour. Secondly, we defined the function summarise_severe() and used it with the .by argument in the summarize() function to calculate the same total.\nWe observed that both approaches produced similar results (we prefer the approach with the .by argument).\n\nFinds all flights that were cancelled or delayed by more than a user supplied number of hours.\nWe solved the question below with our filter function, filter_severe(), from problem 1 above.\n\n\n# Use a user supplied number of hours\ndf_with_user_supplied_hours &lt;-\n  flights |&gt;\n  filter_severe(\n    is.na(arr_time) | dep_delay &gt; 2\n  )\n\n\nSummarizes the weather to compute the minimum, mean, and maximum, of a user supplied variable:\n\n\n\n\n\n\n\n\n\nHint\n\n\n\nBy default, across() renames resulting columns with the pattern: {function}{column_name}, for example, temp_min. You can override this behavior by setting the .names option to “{.fn}{.col}”.\n\n\n\n# Solution\nweather |&gt;\n  summarize(\n    # Temperature \n    min_temp  = min(temp, na.rm = TRUE),\n    mean_temp = mean(temp, na.rm = TRUE),\n    max_temp  = max(temp, na.rm = TRUE),\n    \n    # Pressure\n    min_pressure  = min(pressure, na.rm = TRUE),\n    mean_pressure = mean(pressure, na.rm = TRUE),\n    max_pressure  = max(pressure, na.rm = TRUE),\n    \n    # Precipitation\n    min_precip  = min(precip, na.rm = TRUE),\n    mean_precip = mean(precip, na.rm = TRUE),\n    max_precip  = max(precip, na.rm = TRUE),\n    .groups = \"drop\"\n  ) |&gt; \n    knitr::kable(align = \"c\")\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nmin_temp\nmean_temp\nmax_temp\nmin_pressure\nmean_pressure\nmax_pressure\nmin_precip\nmean_precip\nmax_precip\n\n\n\n\n10.94\n55.26039\n100.04\n983.8\n1017.899\n1042.1\n0\n0.0044691\n1.21\n\n\n\n\n# Write a function\nsummarize_weather &lt;- function(data, vars) {\n  data |&gt;\n    summarize(\n      across({{ vars }},\n        list(\n          min  = \\(x) min(x, na.rm = TRUE),\n          mean = \\(x) mean(x, na.rm = TRUE),\n          max  = \\(x) max(x, na.rm = TRUE)\n        ),\n        .names = \"{.fn}_{.col}\"\n      )\n    ) |&gt;\n    mutate(across(where(is.numeric), \\(x) round(x, 2)))\n}\n\n# Test the function\nweather |&gt; \n    summarize_weather(c(temp, pressure, precip)) |&gt; \n    knitr::kable(align = \"c\")\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nmin_temp\nmean_temp\nmax_temp\nmin_pressure\nmean_pressure\nmax_pressure\nmin_precip\nmean_precip\nmax_precip\n\n\n\n\n10.94\n55.26\n100.04\n983.8\n1017.9\n1042.1\n0\n0\n1.21\n\n\n\n\n\nIn the code chunk mentioned above, typing out all the calls can be tedious, and the code can become repetitive. This is a sign that we should convert our code into a function. Fortunately, we can quickly achieve this by inserting arguments inside doubled braces.\n\nConverts the user supplied variable that uses clock time (e.g., dep_time, arr_time, etc.) into a decimal time (i.e. hours + (minutes / 60)).\n\n\n# Solution\nflights |&gt;\n  select(year:sched_dep_time, arr_time, sched_arr_time) |&gt;\n  mutate(\n    hours = floor(arr_time / 100),\n    minutes = arr_time %% 100,\n    decimal_time = hours + (minutes / 60)\n  )\n\n# A tibble: 336,776 × 10\n    year month   day dep_time sched_dep_time arr_time sched_arr_time hours\n   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;    &lt;int&gt;          &lt;int&gt; &lt;dbl&gt;\n 1  2013     1     1      517            515      830            819     8\n 2  2013     1     1      533            529      850            830     8\n 3  2013     1     1      542            540      923            850     9\n 4  2013     1     1      544            545     1004           1022    10\n 5  2013     1     1      554            600      812            837     8\n 6  2013     1     1      554            558      740            728     7\n 7  2013     1     1      555            600      913            854     9\n 8  2013     1     1      557            600      709            723     7\n 9  2013     1     1      557            600      838            846     8\n10  2013     1     1      558            600      753            745     7\n# ℹ 336,766 more rows\n# ℹ 2 more variables: minutes &lt;dbl&gt;, decimal_time &lt;dbl&gt;\n\n# Write a function\nstandardize_time &lt;- function(data, time_var) {\n  data |&gt;\n    mutate(\n      # floor division\n      hours = floor({{ time_var }} / 100),\n      # extracting the remainder\n      minutes = {{ time_var }} %% 100,\n      # Convert the remainder to minutes; combine the results; round to 2\n      \"{{time_var}}\" := round(hours + minutes / 60, 2)\n    ) |&gt; \n        # Remove unnecessary columns\n        select(-hours, -minutes)\n}\n\n# OR ---------------------------------------------------------------------\n# We could simplify it further, thanks to Zakarie Hashi for the suggestion\nstandardise_time &lt;- function(data, time_var) {\n  data |&gt;\n    mutate(\n      # floor division, extracting the remainder,Convert the remainder to minutes; combine the results; round to 2\n      decimal_time = round(floor({{ time_var }} / 100) + ({{ time_var }} %% 100) / 60, 2)\n    )\n}\n\n# Test the function\nflights |&gt; \n    standardise_time(arr_time) |&gt; \n    slice_head(n = 5) \n\n# A tibble: 5 × 20\n   year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time\n  &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;\n1  2013     1     1      517            515         2      830            819\n2  2013     1     1      533            529         4      850            830\n3  2013     1     1      542            540         2      923            850\n4  2013     1     1      544            545        -1     1004           1022\n5  2013     1     1      554            600        -6      812            837\n# ℹ 12 more variables: arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;,\n#   tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;,\n#   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;, decimal_time &lt;dbl&gt;\n\n\nAs we demonstrated above, it is possible to complete this task with just one line of code, as suggested by Zakarie Hashi in a LinkedIn post from last year. In the function provided above, we utilized the floor() function to extract the hours and used modulo division to retrieve the remaining minutes. We then combined the outcomes and rounded our answer to two decimal places.\n\n\nConclusion\nIn this tutorial, we have shown you how to answer selected practice problems from section 25.3.5 exercises in R for Data Science, 2nd edition by Wickham et al. We have demonstrated various approaches for solving these questions wherever possible. Although we have highlighted some ways to solve these exercises, there are many other methods available. We encourage you to try them out and share your answers with us and our readers.\nHappy Coding 💪!"
+  },
+  {
+    "objectID": "tutorials/index.html",
+    "href": "tutorials/index.html",
+    "title": "Tutorials",
+    "section": "",
+    "text": "Whether you’re an aspiring data scientist/analyst or a seasoned data science professional, my data science tutorials are designed to improve your R and Python coding skills. I assist aspiring and accomplished data scientists by offering tailored content based on the most up-to-date coding best practices. I strive to get you up and running and empower you to excel in your data science pursuits. Explore my tutorials and join my vibrant community of learners dedicated to continuous skill improvement.\n\n\n\n\n\n\n\n\n  \n\n\n\n\nShowcasing the dplyr case_when() and case_match() Functions\n\n\n\n\n\n\n\nData Science\n\n\nData Wrangling\n\n\nR\n\n\n\n\nWhile reading Effective Pandas 2 by Matt Harrison, I learned about the new .case_when method in Pandas 2, which is a total life changer for pandas users who have longed for such a function for a long time. However, as an R programmer, I decided to review the dplyr case_when() documentation and learned that this “lifesaving” function has been updated.\n\n\n\n\n\n\nJan 4, 2024\n\n\nAlier Reng\n\n\n\n\n\n\n  \n\n\n\n\nSolving R 4 Data Science, 2nd-edition: Section 25.3.5 Exercises.\n\n\n\n\n\n\n\nData Science\n\n\nR\n\n\nTutorial\n\n\n\n\nTo practice R programming through hands-on exercises, as it is the best way to enhance your programming skills. In this tutorial, we will solve problems from Section 25.3.5 of the famous R 4 Data Science by Hadley Wickham et al.\n\n\n\n\n\n\nNov 11, 2023\n\n\nAlier Reng\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "feeds.html",
@@ -201,68 +208,5 @@
     "title": "Terms and conditions",
     "section": "",
     "text": "The statements published on this blog reflect my personal views and opinions, not my employer’s."
-  },
-  {
-    "objectID": "tutorials/posts/2024/01/04/tutorial-02.html",
-    "href": "tutorials/posts/2024/01/04/tutorial-02.html",
-    "title": "Showcasing the dplyr case_when() and case_match() Functions",
-    "section": "",
-    "text": "While reading Effective Pandas 2 by Matt Harrison, I learned about the new .case_when() method in Pandas 2, which is a total life changer for pandas users who have longed for such a function for a long time. However, as an R programmer, I decided to review the dplyr case_when() documentation and learned that this lifesaving function has been updated. The recently released version of the case_when() function now includes the following arguments:\n\ncase_when(…, .default = NULL, .ptype = NULL, .size = NULL)\n\nYou can read more about case_when() function here!"
-  },
-  {
-    "objectID": "tutorials/posts/2024/01/04/tutorial-02.html#loading-the-required-libraries",
-    "href": "tutorials/posts/2024/01/04/tutorial-02.html#loading-the-required-libraries",
-    "title": "Showcasing the dplyr case_when() and case_match() Functions",
-    "section": "Loading the Required Libraries",
-    "text": "Loading the Required Libraries\nWe will load the entire tidyverse meta-package (which contains 9 packages) for this tutorial, although we will only use the dplyr, tidyr, and stringr packages. Additionally, we will suppress warnings and notifications by setting the warning and message options to false, respectively.\n\nlibrary(tidyverse)"
-  },
-  {
-    "objectID": "tutorials/posts/2024/01/04/tutorial-02.html#importing-dataset",
-    "href": "tutorials/posts/2024/01/04/tutorial-02.html#importing-dataset",
-    "title": "Showcasing the dplyr case_when() and case_match() Functions",
-    "section": "Importing dataset",
-    "text": "Importing dataset\n\nssd_census_2008 &lt;-\n  vroom::vroom(\n    \"ss_2008_census_data_raw.csv\",\n    show_col_types = FALSE\n  ) |&gt;\n  select(\n    state        = `Region Name`,\n    gender       = `Variable Name`,\n    age_category = `Age Name`,\n    population   = `2008`\n  ) |&gt;\n  filter(\n    !is.na(gender),\n    age_category != \"Total\"\n  )\n\n\n# Showcase case_when() function\ncase_when_tbl &lt;-\n  ssd_census_2008 |&gt;\n  mutate(\n    state = state |&gt; str_to_lower(),\n    former_region = case_when(\n      str_detect(state, \"equatoria\") ~ \"Greater Equatoria\",\n      str_detect(state, \"upper nile\") ~ \"Greater Upper Nile\",\n      str_detect(state, \"unity\") ~ \"Greater Upper Nile\",\n      str_detect(state, \"jonglei\") ~ \"Greater Upper Nile\",\n      .default = \"Greater Bahr el Ghazal\"\n    )\n  ) |&gt;\n  mutate(\n    age_category = case_when(\n      age_category %in% c(\"0 to 4\", \"5 to 9\", \"10 to 14\") ~ \"0-14\",\n      age_category %in% c(\"15 to 19\", \"20 to 24\") ~ \"15-24\",\n      age_category %in% c(\"25 to 29\", \"30 to 34\") ~ \"25-34\",\n      age_category %in% c(\"35 to 39\", \"40 to 44\") ~ \"35-44\",\n      age_category %in% c(\"45 to 49\", \"50 to 54\") ~ \"45-54\",\n      age_category %in% c(\"55 to 59\", \"60 to 64\") ~ \"55-64\",\n      .default = \"65+\"\n    )\n  ) |&gt;\n  # Group by and summarization\n  summarize(\n    population = sum(population),\n    .by = c(former_region, state, gender, age_category)\n  )"
-  },
-  {
-    "objectID": "tutorials/posts/2024/01/04/tutorial-02.html#case_match-example",
-    "href": "tutorials/posts/2024/01/04/tutorial-02.html#case_match-example",
-    "title": "Showcasing the dplyr case_when() and case_match() Functions",
-    "section": "case_match() Example",
-    "text": "case_match() Example\nAccording to the dplyr website, the case_match() function is a “general vectorized switch().” Below is a summary from the website:\n\nThis function allows you to vectorise multiple switch() statements. Each case is evaluated sequentially and the first match for each element determines the corresponding value in the output vector. If no cases match, the .default is used. case_match() is an R equivalent of the SQL “simple” CASE WHEN statement.\n\n\nConnection to case_when(). While case_when() uses logical expressions on the left-hand side of the formula, case_match() uses values to match against .x with.\n\n\n# Showcase case_match() function ------\ncase_match_tbl &lt;-\n  ssd_census_2008 |&gt;\n  # add former regions of South Sudan\n  mutate(\n    state = str_to_lower(state),\n    # former regions\n    former_region = case_match(\n      state,\n      c(\n        \"unity\",\n        \"upper nile\",\n        \"jonglei\"\n      ) ~ \"Greater Upper Nile\",\n      c(\n        \"central equatoria\",\n        \"western equatoria\",\n        \"eastern equatoria\"\n      ) ~ \"Greater Equatoria\",\n      .default = \"Greater Bahr el Ghazal\"\n    ),\n    # age category\n    age_category = case_match(\n      age_category,\n      c(\"0 to 4\", \"5 to 9\", \"10 to 14\") ~ \"0-14\",\n      c(\"15 to 19\", \"20 to 24\") ~ \"15-24\",\n      c(\"25 to 29\", \"30 to 34\") ~ \"25-34\",\n      c(\"35 to 39\", \"40 to 44\") ~ \"35-44\",\n      c(\"45 to 49\", \"50 to 54\") ~ \"45-54\",\n      c(\"55 to 59\", \"60 to 64\") ~ \"55-64\",\n      .default = \"65+\"\n    )\n  )\n\nUsing the same dataset, the preceding code snippets showed how to implement both the case_when() and case_match() functions. Here, it is vividly clear that these two functions are similar, but case_match() involves less typing, and it seems to be a bit cleaner than the case_when()."
-  },
-  {
-    "objectID": "tutorials/posts/2024/01/04/tutorial-02.html#tidying-column-values-with-the-separate-variants",
-    "href": "tutorials/posts/2024/01/04/tutorial-02.html#tidying-column-values-with-the-separate-variants",
-    "title": "Showcasing the dplyr case_when() and case_match() Functions",
-    "section": "Tidying Column Values with the separate() variants",
-    "text": "Tidying Column Values with the separate() variants\nIn this section, we’ll demonstrate how to use the separate_wider_delim() function, the most commonly used of the two variants of the separate() function. First, we will show how we solved the same problem previously and then show the updated variant.\n\nWe are trying to solve\nHere, we aim to separate the gender column into three new columns but only keep the middle column with gender rows. Here are the unique values currently in the gender column: “Population, Total (Number),” “Population, Male (Number),” and “Population, Female (Number).”"
-  },
-  {
-    "objectID": "tutorials/posts/2024/01/04/tutorial-02.html#loading-the-dataset",
-    "href": "tutorials/posts/2024/01/04/tutorial-02.html#loading-the-dataset",
-    "title": "Showcasing the dplyr case_when() and case_match() Functions",
-    "section": "Loading the dataset",
-    "text": "Loading the dataset\nWe will use the vroom package instead of the readr package to load the South Sudan 2008 census dataset. Even though our dataset is too small for the speed to matter, vroom is faster than readr.\n\n# Load the data -----------------\nssd_census_2008 &lt;-\n  vroom::vroom(\n    \"ss_2008_census_data_raw.csv\",\n    show_col_types = FALSE\n  ) |&gt;\n  select(\n    state        = `Region Name`,\n    gender       = `Variable Name`,\n    age_category = `Age Name`,\n    population   = `2008`\n  ) |&gt;\n  filter(\n    !is.na(gender),\n    age_category != \"Total\"\n  )"
-  },
-  {
-    "objectID": "tutorials/posts/2024/01/04/tutorial-02.html#case_when-example",
-    "href": "tutorials/posts/2024/01/04/tutorial-02.html#case_when-example",
-    "title": "Showcasing the dplyr case_when() and case_match() Functions",
-    "section": "case_when() Example",
-    "text": "case_when() Example\n\n# Showcase case_when() function ---------\ncase_when_tbl &lt;-\n  ssd_census_2008 |&gt;\n  mutate(\n    state = state |&gt; str_to_lower(),\n    former_region = case_when(\n      str_detect(state, \"equatoria\") ~ \"Greater Equatoria\",\n      str_detect(state, \"upper nile\") ~ \"Greater Upper Nile\",\n      str_detect(state, \"unity\") ~ \"Greater Upper Nile\",\n      str_detect(state, \"jonglei\") ~ \"Greater Upper Nile\",\n      .default = \"Greater Bahr el Ghazal\"\n    )\n  ) |&gt;\n  mutate(\n    age_category = case_when(\n      age_category %in% c(\"0 to 4\", \"5 to 9\", \"10 to 14\") ~ \"0-14\",\n      age_category %in% c(\"15 to 19\", \"20 to 24\") ~ \"15-24\",\n      age_category %in% c(\"25 to 29\", \"30 to 34\") ~ \"25-34\",\n      age_category %in% c(\"35 to 39\", \"40 to 44\") ~ \"35-44\",\n      age_category %in% c(\"45 to 49\", \"50 to 54\") ~ \"45-54\",\n      age_category %in% c(\"55 to 59\", \"60 to 64\") ~ \"55-64\",\n      .default = \"65+\"\n    )\n  ) |&gt;\n  # Group by and summarization\n  summarize(\n    population = sum(population),\n    .by = c(former_region, state, gender, age_category)\n  )"
-  },
-  {
-    "objectID": "tutorials/posts/2024/01/04/tutorial-02.html#before",
-    "href": "tutorials/posts/2024/01/04/tutorial-02.html#before",
-    "title": "Showcasing the dplyr case_when() and case_match() Functions",
-    "section": "Before",
-    "text": "Before\n\n# Showcase the separate() function\nseparate_before_tbl &lt;-\n  case_match_tbl |&gt;\n  # Split gender column into: pop, gender, and other\n  separate(\n    col = gender, \n    into = c(\"pop\", \"gender\", \"other\"), \n    sep = \" \"\n  ) |&gt;\n  # Remove extra/unwanted columns\n  select(-pop, -other) |&gt; \n  # Remove the total rows\n  filter(gender != \"Total\") |&gt;\n  # Group by and summarization\n  summarize(\n    population = sum(population),\n    .by = c(former_region, state, gender, age_category)\n  )\n\nThe separate() function handles additional pieces with the extra argument, which can be set to either “warn,” “drop,” or “merge.” However, if there are fewer pieces, then separate() handles them with the fill argument, which can be set to either “warn” (this is the default option; it emits a warning and fills in the missing pieces from the right), “right” (‘fill with missing values on the right’), and “left” (‘fill with missing values on the left’)."
-  },
-  {
-    "objectID": "tutorials/posts/2024/01/04/tutorial-02.html#now",
-    "href": "tutorials/posts/2024/01/04/tutorial-02.html#now",
-    "title": "Showcasing the dplyr case_when() and case_match() Functions",
-    "section": "Now",
-    "text": "Now\n\n# Showcase the separate() function\nseparate_wider_delim_tbl &lt;-\n  case_match_tbl |&gt;\n  # Split gender column\n  separate_wider_delim(\n    gender,\n    delim    = \" \",\n    names    = c(NA, \"gender\"),\n    too_many = \"drop\" # drop extra column\n  ) |&gt;\n  # Remove the total rows\n  filter(gender != \"Total\") |&gt;\n  # Group by and summarization\n  summarize(\n    population = sum(population),\n    .by = c(former_region, state, gender, age_category)\n  )"
   }
 ]

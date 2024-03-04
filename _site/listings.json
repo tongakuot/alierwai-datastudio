@@ -1,13 +1,5 @@
 [
   {
-    "listing": "/index.html",
-    "items": [
-      "/tutorials/posts/2024/01/04/tutorial-02.html",
-      "/case-studies/posts/2023/10/18/calgary_crime_analysis.html",
-      "/tutorials/posts/2023/11/11/tutorial-01.html"
-    ]
-  },
-  {
     "listing": "/latest-articles.html",
     "items": [
       "/tutorials/posts/2024/01/04/tutorial-02.html",
@@ -16,9 +8,14 @@
     ]
   },
   {
-    "listing": "/tutorials/index.html",
+    "listing": "/talks/index.html",
+    "items": []
+  },
+  {
+    "listing": "/index.html",
     "items": [
       "/tutorials/posts/2024/01/04/tutorial-02.html",
+      "/case-studies/posts/2023/10/18/calgary_crime_analysis.html",
       "/tutorials/posts/2023/11/11/tutorial-01.html"
     ]
   },
@@ -29,7 +26,10 @@
     ]
   },
   {
-    "listing": "/talks/index.html",
-    "items": []
+    "listing": "/tutorials/index.html",
+    "items": [
+      "/tutorials/posts/2024/01/04/tutorial-02.html",
+      "/tutorials/posts/2023/11/11/tutorial-01.html"
+    ]
   }
 ]

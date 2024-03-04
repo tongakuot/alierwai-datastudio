@@ -13,6 +13,8 @@
 <url>https://alierwaidatastudio.com/images/logo.png</url>
 <title>Alierwai DataStudio</title>
 <link>https://alierwaidatastudio.com/case-studies/index.html</link>
+<height>92</height>
+<width>144</width>
 </image>
 <generator>quarto-1.3.340</generator>
 <lastBuildDate>Sat, 11 Nov 2023 05:00:00 GMT</lastBuildDate>
@@ -745,7 +747,7 @@ font-style: inherit;">#Print the plot</span></span>
 <div class="cell-output-display">
 <div id="fig-ggplot_1" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
-<p><a href="calgary_crime_analysis_files/figure-html/fig-ggplot_1-1.png" class="lightbox" title="Calgary Crime Activities by Sector &amp; Year" data-gallery="quarto-lightbox-gallery-1"><img src="https://alierwaidatastudio.com/case-studies/posts/2023/10/18/calgary_crime_analysis_files/figure-html/fig-ggplot_1-1.png" class="img-fluid figure-img" width="672"></a></p>
+<p><a href="calgary_crime_analysis_files/figure-html/fig-ggplot_1-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Calgary Crime Activities by Sector &amp; Year"><img src="https://alierwaidatastudio.com/case-studies/posts/2023/10/18/calgary_crime_analysis_files/figure-html/fig-ggplot_1-1.png" class="img-fluid figure-img" width="672"></a></p>
 <figcaption class="figure-caption">Figure&nbsp;1: Calgary Crime Activities by Sector &amp; Year</figcaption>
 </figure>
 </div>
@@ -851,7 +853,7 @@ font-style: inherit;"># Display the plot</span></span>
 <div class="cell-output-display">
 <div id="fig-ggplot_2" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
-<p><a href="calgary_crime_analysis_files/figure-html/fig-ggplot_2-1.png" class="lightbox" title="Calgary Crime Activities by Sector &amp; Category" data-gallery="quarto-lightbox-gallery-2"><img src="https://alierwaidatastudio.com/case-studies/posts/2023/10/18/calgary_crime_analysis_files/figure-html/fig-ggplot_2-1.png" class="img-fluid figure-img" width="672"></a></p>
+<p><a href="calgary_crime_analysis_files/figure-html/fig-ggplot_2-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Calgary Crime Activities by Sector &amp; Category"><img src="https://alierwaidatastudio.com/case-studies/posts/2023/10/18/calgary_crime_analysis_files/figure-html/fig-ggplot_2-1.png" class="img-fluid figure-img" width="672"></a></p>
 <figcaption class="figure-caption">Figure&nbsp;2: Calgary Crime Activities by Sector &amp; Category</figcaption>
 </figure>
 </div>

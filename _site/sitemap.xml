@@ -1,55 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://alierwaidatastudio.com/index.html</loc>
-    <lastmod>2024-03-04T04:29:32.743Z</lastmod>
-  </url>
-  <url>
-    <loc>https://alierwaidatastudio.com/tutorials/posts/2024/01/04/case_when_example.html</loc>
-    <lastmod>2024-03-03T00:44:08.892Z</lastmod>
-  </url>
-  <url>
     <loc>https://alierwaidatastudio.com/latest-articles.html</loc>
-    <lastmod>2024-03-04T02:18:38.043Z</lastmod>
-  </url>
-  <url>
-    <loc>https://alierwaidatastudio.com/tutorials/index.html</loc>
-    <lastmod>2024-03-04T02:18:39.219Z</lastmod>
-  </url>
-  <url>
-    <loc>https://alierwaidatastudio.com/about-us.html</loc>
-    <lastmod>2024-03-04T04:30:45.499Z</lastmod>
+    <lastmod>2024-03-04T06:21:49.577Z</lastmod>
   </url>
   <url>
     <loc>https://alierwaidatastudio.com/contact.html</loc>
-    <lastmod>2024-03-04T04:31:10.176Z</lastmod>
-  </url>
-  <url>
-    <loc>https://alierwaidatastudio.com/case-studies/index.html</loc>
-    <lastmod>2024-03-04T04:30:12.790Z</lastmod>
-  </url>
-  <url>
-    <loc>https://alierwaidatastudio.com/case-studies/posts/2023/10/18/calgary_crime_analysis.html</loc>
-    <lastmod>2024-03-03T02:56:29.872Z</lastmod>
+    <lastmod>2024-03-04T06:21:04.404Z</lastmod>
   </url>
   <url>
     <loc>https://alierwaidatastudio.com/talks/index.html</loc>
-    <lastmod>2024-03-03T02:56:38.840Z</lastmod>
+    <lastmod>2024-03-04T06:21:05.558Z</lastmod>
   </url>
   <url>
-    <loc>https://alierwaidatastudio.com/tutorials/posts/2023/11/11/tutorial-01.html</loc>
-    <lastmod>2024-03-04T04:30:38.223Z</lastmod>
+    <loc>https://alierwaidatastudio.com/index.html</loc>
+    <lastmod>2024-03-04T06:22:06.565Z</lastmod>
   </url>
   <url>
-    <loc>https://alierwaidatastudio.com/feeds.html</loc>
-    <lastmod>2024-03-03T02:55:47.383Z</lastmod>
+    <loc>https://alierwaidatastudio.com/case-studies/posts/2023/10/18/calgary_crime_analysis.html</loc>
+    <lastmod>2024-03-04T06:21:09.940Z</lastmod>
   </url>
   <url>
-    <loc>https://alierwaidatastudio.com/ts-and-cs.html</loc>
-    <lastmod>2024-03-03T02:55:28.600Z</lastmod>
+    <loc>https://alierwaidatastudio.com/case-studies/index.html</loc>
+    <lastmod>2024-03-04T06:21:10.423Z</lastmod>
+  </url>
+  <url>
+    <loc>https://alierwaidatastudio.com/about-us.html</loc>
+    <lastmod>2024-03-04T06:21:11.164Z</lastmod>
   </url>
   <url>
     <loc>https://alierwaidatastudio.com/tutorials/posts/2024/01/04/tutorial-02.html</loc>
-    <lastmod>2024-03-04T02:18:34.778Z</lastmod>
+    <lastmod>2024-03-04T06:21:53.723Z</lastmod>
+  </url>
+  <url>
+    <loc>https://alierwaidatastudio.com/tutorials/posts/2023/11/11/tutorial-01.html</loc>
+    <lastmod>2024-03-04T06:22:14.589Z</lastmod>
+  </url>
+  <url>
+    <loc>https://alierwaidatastudio.com/tutorials/index.html</loc>
+    <lastmod>2024-03-04T06:22:10.710Z</lastmod>
+  </url>
+  <url>
+    <loc>https://alierwaidatastudio.com/feeds.html</loc>
+    <lastmod>2024-03-04T06:21:15.772Z</lastmod>
+  </url>
+  <url>
+    <loc>https://alierwaidatastudio.com/ts-and-cs.html</loc>
+    <lastmod>2024-03-04T06:21:17.089Z</lastmod>
   </url>
 </urlset>
