@@ -1,0 +1,244 @@
+---
+title: "Solving R 4 Data Science, 2nd-edition: Section 25.3.5 Exercises."
+description: |
+  To practice R programming through hands-on exercises, as it is the best way to enhance your programming skills. In this tutorial, we will solve problems from Section 25.3.5 of the famous R 4 Data Science by Hadley Wickham et al. 
+categories:
+  - Data Science 
+  - R
+  - Tutorial
+author: Alier Reng
+date: 2023-11-11
+date-format: "D MMMM YYYY"
+image: images/tutorial-01-img.png
+image-alt: Solving R 4 Data Science Exercises
+toc: true
+filters:
+  - lightbox
+lightbox: auto
+
+code-block-bg: true
+code-block-border-left: "#31BAE9"
+---
+
+# Motivation
+
+To practice R programming through hands-on exercises, as it is the best way to enhance your programming skills.
+
+In this tutorial, we will solve problems from Section 25.3.5 of the famous **R 4 Data Science by Hadley Wickham et al.** Let's get started!
+
+# Loading Required Libraries
+
+In this section, we will load `tidyverse` and `nycflights13` packages.
+We will set `warning` and `message` to false to suppress warnings and notifications.
+
+```{r}
+#| warning: false
+#| message: false
+
+# Libraries
+library(tidyverse)
+library(nycflights13)
+```
+
+# Section 25.3.5 Exercises
+
+1)  Using the datasets from nycflights13, write a function that:
+
+-   Finds all flights that were cancelled (i.e. is.na(arr_time)) or delayed by more than an hour. About the author
+
+```{r}
+ # Subset flights data
+canceled_or_delayed_flights <- 
+	flights |>
+  filter(is.na(arr_time) | dep_delay > 1)
+
+# Write a function
+filter_severe <- function(data, condition) {
+  data |>
+    filter({{ condition }})
+}
+
+# Let's test our function
+canceled_or_delayed_flights <- 
+	flights |> 
+	filter_severe(is.na(arr_time) | dep_delay > 1)
+
+# Display the results
+canceled_or_delayed_flights |> 
+	slice_head(n = 5) |> 
+	knitr::kable(align = "c")
+
+```
+
+In the code snippet above, we first wrote the code for solving the problem and then converted our code into a function as instructed.
+Next, we tested our function to ensure that it works as expected.
+
+-   Counts the number of cancelled flights and the number of flights delayed by more than an hour.
+
+```{r}
+# Write a function
+summarize_severe <- function(data, var) {
+  data |>
+    summarize(
+      n = sum({{ var }})
+    )
+}
+
+# Test the function
+df_0 <- flights |>
+  group_by(dest) |>
+  summarize_severe(is.na(arr_time) | dep_delay > 1)
+
+# OR ------------------------------------------------
+
+# We could do this:
+summarise_severe <- function(data, group_var, var) {
+  data |>
+    summarize(
+      total = sum({{ var }}),
+      .by = {{ group_var }}
+    )
+}
+
+# Test the second function
+df_1 <-
+  summarise_severe(
+    flights,
+    var = c(is.na(arr_time) | dep_delay > 1),
+    group_var = dest
+  )
+```
+
+In the code snippet above, we solved a problem using two approaches.
+Firstly, we defined the function `summarize_severe()` and used it along with the `group_by()` function to calculate the total number of canceled flights and flights delayed by over one hour.
+Secondly, we defined the function `summarise_severe()` and used it with the `.by` argument in the `summarize()` function to calculate the same total.
+
+We observed that both approaches produced similar results (we prefer the approach with the .by argument).
+
+-   Finds all flights that were cancelled or delayed by more than a user supplied number of hours.
+
+    We solved the question below with our filter function, `filter_severe()`, from problem 1 above.
+
+```{r}
+# Use a user supplied number of hours
+df_with_user_supplied_hours <-
+  flights |>
+  filter_severe(
+    is.na(arr_time) | dep_delay > 2
+  )
+```
+
+-   Summarizes the weather to compute the minimum, mean, and maximum, of a user supplied variable:
+
+::: aside
+::: callout-tip
+# Hint
+
+By default, across() renames resulting columns with the pattern: {function}{column_name}, for example, temp_min.
+You can override this behavior by setting the .names option to "{.fn}{.col}".
+:::
+:::
+
+```{r}
+# Solution
+weather |>
+  summarize(
+  	# Temperature 
+    min_temp  = min(temp, na.rm = TRUE),
+    mean_temp = mean(temp, na.rm = TRUE),
+    max_temp  = max(temp, na.rm = TRUE),
+    
+    # Pressure
+    min_pressure  = min(pressure, na.rm = TRUE),
+    mean_pressure = mean(pressure, na.rm = TRUE),
+    max_pressure  = max(pressure, na.rm = TRUE),
+    
+    # Precipitation
+    min_precip  = min(precip, na.rm = TRUE),
+    mean_precip = mean(precip, na.rm = TRUE),
+    max_precip  = max(precip, na.rm = TRUE),
+    .groups = "drop"
+  ) |> 
+	knitr::kable(align = "c")
+
+# Write a function
+summarize_weather <- function(data, vars) {
+  data |>
+    summarize(
+      across({{ vars }},
+        list(
+          min  = \(x) min(x, na.rm = TRUE),
+          mean = \(x) mean(x, na.rm = TRUE),
+          max  = \(x) max(x, na.rm = TRUE)
+        ),
+        .names = "{.fn}_{.col}"
+      )
+    ) |>
+    mutate(across(where(is.numeric), \(x) round(x, 2)))
+}
+
+# Test the function
+weather |> 
+	summarize_weather(c(temp, pressure, precip)) |> 
+	knitr::kable(align = "c")
+```
+
+In the code chunk mentioned above, typing out all the calls can be tedious, and the code can become repetitive.
+This is a sign that we should convert our code into a function.
+Fortunately, we can quickly achieve this by inserting arguments inside doubled braces.
+
+-   Converts the user supplied variable that uses clock time (e.g., dep_time, arr_time, etc.) into a decimal time (i.e. hours + (minutes / 60)).
+
+```{r}
+# Solution
+flights |>
+  select(year:sched_dep_time, arr_time, sched_arr_time) |>
+  mutate(
+    hours = floor(arr_time / 100),
+    minutes = arr_time %% 100,
+    decimal_time = hours + (minutes / 60)
+  )
+
+# Write a function
+standardize_time <- function(data, time_var) {
+  data |>
+    mutate(
+      # floor division
+      hours = floor({{ time_var }} / 100),
+      # extracting the remainder
+      minutes = {{ time_var }} %% 100,
+      # Convert the remainder to minutes; combine the results; round to 2
+      "{{time_var}}" := round(hours + minutes / 60, 2)
+    ) |> 
+		# Remove unnecessary columns
+		select(-hours, -minutes)
+}
+
+# OR ---------------------------------------------------------------------
+# We could simplify it further, thanks to Zakarie Hashi for the suggestion
+standardise_time <- function(data, time_var) {
+  data |>
+    mutate(
+      # floor division, extracting the remainder,Convert the remainder to minutes; combine the results; round to 2
+      decimal_time = round(floor({{ time_var }} / 100) + ({{ time_var }} %% 100) / 60, 2)
+    )
+}
+
+# Test the function
+flights |> 
+	standardise_time(arr_time) |> 
+	slice_head(n = 5) 
+```
+
+As we demonstrated above, it is possible to complete this task with just one line of code, as suggested by Zakarie Hashi in a LinkedIn post from last year.
+In the function provided above, we utilized the floor() function to extract the hours and used modulo division to retrieve the remaining minutes.
+We then combined the outcomes and rounded our answer to two decimal places.
+
+# Conclusion
+
+In this tutorial, we have shown you how to answer selected practice problems from section 25.3.5 exercises in R for Data Science, 2nd edition by Wickham et al.
+We have demonstrated various approaches for solving these questions wherever possible.
+Although we have highlighted some ways to solve these exercises, there are many other methods available.
+We encourage you to try them out and share your answers with us and our readers.
+
+**Happy Coding** 💪!

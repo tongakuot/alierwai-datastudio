@@ -1,0 +1,21 @@
+---
+pagetitle: Case studies | Alierwai DataStudio
+title: Case studies
+subtitle: "At ADS, our goal is to provide you with the essential skills necessary to advance your data science career. We understand that navigating through the vast amount of data science content available online can be overwhelming, and that's why we strive to help you identify relevant and valuable information to achieve your goals. To become a successful data scientist or analyst, you need guidance and mentorship from industry experts who have demonstrated their abilities on real-world data science projects. At ADS, we offer you the opportunity to explore your potential and embark on a journey toward a fulfilling career in data science."
+search: false  
+comments: false
+listing:
+  contents: 
+  - posts
+  - "!index.qmd"
+  sort: "date desc"
+  type: grid
+  categories: true
+  sort-ui: false
+  filter-ui: false
+  page-size: 30
+  feed: true
+code-block-bg: true
+code-block-border-left: "#31BAE9"
+---
+At ADS, we take pride in showcasing our data science expertise through impactful case studies using real-world data. In the 21st century, where word of mouth alone is insufficient, we understand the importance of providing practical examples. On this page, our work speaks for itself, demonstrating what we know and how our data solutions and services deliver tangible value. These case studies are more than just projects; they are a testament to our commitment to excellence and a foundation for building trust in our capabilities.

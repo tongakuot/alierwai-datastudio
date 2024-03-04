@@ -1,0 +1,258 @@
+---
+title: "Showcasing the dplyr case_when() and case_match() Functions"
+description: |
+  While reading Effective Pandas 2 by Matt Harrison, I learned about the new .case_when method in Pandas 2, which is a total life changer for pandas users who have longed for such a function for a long time. However, as an R programmer, I decided to review the dplyr case_when() documentation and learned that this "lifesaving" function has been updated.  
+categories:
+  - Data Science 
+  - Data Wrangling
+  - R
+author: Alier Reng
+date: 2024-01-04
+date-format: "D MMMM YYYY"
+image: images/case_when_img.png
+image-alt: case_when() function
+toc: true
+filters:
+  - lightbox
+lightbox: auto
+
+code-block-bg: true
+code-block-border-left: "#31BAE9"
+---
+
+# Motivation
+
+While reading **Effective Pandas 2** by **Matt Harrison**, I learned about the new `.case_when()` method in **Pandas 2**, which is a total life changer for `pandas` users who have longed for such a function for a long time.
+However, as an R programmer, I decided to review the `dplyr case_when()` documentation and learned that this **lifesaving** function has been updated.
+The recently released version of the `case_when()` function now includes the following arguments:
+
+> case_when(..., .default = NULL, .ptype = NULL, .size = NULL)
+
+You can read more about `case_when()` function [here!](https://dplyr.tidyverse.org/reference/case_when.html)
+
+# Introduction
+
+The `case_when()` and `case_match()` functions from the dplyr package provide a flexible way to create conditional statements based on multiple conditions.
+In this tutorial, we showcase these two functions and conclude with a bonus section highlighting the `separate_wider_delim()` function from the `tidyr` package.
+
+The [dplyr website](https://dplyr.tidyverse.org/reference/case_when.html) describes the amazing `case_when()` function as follows:
+
+> This function allows you to vectorise multiple [`if_else()`](https://dplyr.tidyverse.org/reference/if_else.html) statements.
+> Each case is evaluated sequentially and the first match for each element determines the corresponding value in the output vector.
+If no cases match, the `.default` is used as a final "else" statment.
+
+> `case_when()` is an R equivalent of the SQL "searched" `CASE WHEN` statement.
+
+# Getting Started
+
+## Loading the Required Libraries
+
+We will load the entire tidyverse meta-package (which contains 9 packages) for this tutorial, although we will only use the `dplyr`, `tidyr`, and `stringr` packages. Additionally, we will suppress warnings and notifications by setting the warning and message options to false, respectively.
+
+```{r}
+#| warning: false
+#| message: false
+library(tidyverse)
+```
+
+## Loading the dataset
+We will use the `vroom` package instead of the `readr` package to load the South Sudan 2008 census dataset. Even though our dataset is too small for the speed to matter, `vroom` is faster than `readr`.
+
+```{r}
+# Load the data -----------------
+ssd_census_2008 <-
+  vroom::vroom(
+    "ss_2008_census_data_raw.csv",
+    show_col_types = FALSE
+  ) |>
+  select(
+    state        = `Region Name`,
+    gender       = `Variable Name`,
+    age_category = `Age Name`,
+    population   = `2008`
+  ) |>
+  filter(
+    !is.na(gender),
+    age_category != "Total"
+  )
+```
+
+# `case_when()` Example
+
+```{r}
+# Showcase case_when() function ---------
+case_when_tbl <-
+  ssd_census_2008 |>
+  mutate(
+    state = state |> str_to_lower(),
+    former_region = case_when(
+      str_detect(state, "equatoria") ~ "Greater Equatoria",
+      str_detect(state, "upper nile") ~ "Greater Upper Nile",
+      str_detect(state, "unity") ~ "Greater Upper Nile",
+      str_detect(state, "jonglei") ~ "Greater Upper Nile",
+      .default = "Greater Bahr el Ghazal"
+    )
+  ) |>
+  mutate(
+    age_category = case_when(
+      age_category %in% c("0 to 4", "5 to 9", "10 to 14") ~ "0-14",
+      age_category %in% c("15 to 19", "20 to 24") ~ "15-24",
+      age_category %in% c("25 to 29", "30 to 34") ~ "25-34",
+      age_category %in% c("35 to 39", "40 to 44") ~ "35-44",
+      age_category %in% c("45 to 49", "50 to 54") ~ "45-54",
+      age_category %in% c("55 to 59", "60 to 64") ~ "55-64",
+      .default = "65+"
+    )
+  ) |>
+  # Group by and summarization
+  summarize(
+    population = sum(population),
+    .by = c(former_region, state, gender, age_category)
+  )
+```
+
+#  `case_match()` Example
+
+According to the `dplyr` website, the `case_match()` function is a "general vectorized switch()." Below is a summary from the website:
+
+> This function allows you to vectorise multiple switch() statements. Each case is evaluated sequentially and the first match for each element determines the corresponding value in the output vector. If no cases match, the .default is used.
+case_match() is an R equivalent of the SQL "simple" CASE WHEN statement.
+
+> Connection to case_when().
+While case_when() uses logical expressions on the left-hand side of the formula, case_match() uses values to match against .x with. 
+
+```{r}
+# Showcase case_match() function ------
+case_match_tbl <-
+  ssd_census_2008 |>
+  # add former regions of South Sudan
+  mutate(
+    state = str_to_lower(state),
+    # former regions
+    former_region = case_match(
+      state,
+      c(
+        "unity",
+        "upper nile",
+        "jonglei"
+      ) ~ "Greater Upper Nile",
+      c(
+        "central equatoria",
+        "western equatoria",
+        "eastern equatoria"
+      ) ~ "Greater Equatoria",
+      .default = "Greater Bahr el Ghazal"
+    ),
+    # age category
+    age_category = case_match(
+      age_category,
+      c("0 to 4", "5 to 9", "10 to 14") ~ "0-14",
+      c("15 to 19", "20 to 24") ~ "15-24",
+      c("25 to 29", "30 to 34") ~ "25-34",
+      c("35 to 39", "40 to 44") ~ "35-44",
+      c("45 to 49", "50 to 54") ~ "45-54",
+      c("55 to 59", "60 to 64") ~ "55-64",
+      .default = "65+"
+    )
+  )
+```
+
+Using the same dataset, the preceding code snippets showed how to implement both the `case_when()` and `case_match()` functions. Here, it is vividly clear that these two functions are similar, but `case_match()` involves less typing, and it seems to be a bit cleaner than the `case_when()`.
+
+# Bonus Tip
+
+In this final section, as a bonus, we'll throw in the new updates about the `separate()` function from the `tidyr` package. Below is what we gleaned from the package website:
+
+> separate() has been superseded in favour of separate_wider_position() and separate_wider_delim() because the two functions make the two uses more obvious, the API is more polished, and the handling of problems is better. Superseded functions will not go away, but will only receive critical bug fixes.
+
+> Given either a regular expression or a vector of character positions, separate() turns a single character column into multiple columns.
+
+
+## Tidying Column Values with the `separate()` variants
+
+In this section, we'll demonstrate how to use the `separate_wider_delim()` function, the most commonly used of the two variants of the `separate()` function. First, we will show how we solved the same problem previously and then show the updated variant.
+
+### We are trying to solve
+Here, we aim to separate the gender column into three new columns but only keep the middle column with gender rows. Here are the unique values currently in the gender column: "Population, Total (Number)," "Population, Male (Number)," and "Population, Female (Number)."
+
+## Before
+
+```{r}
+# Showcase the separate() function
+separate_before_tbl <-
+  case_match_tbl |>
+  # Split gender column into: pop, gender, and other
+  separate(
+    col = gender, 
+    into = c("pop", "gender", "other"), 
+    sep = " "
+  ) |>
+  # Remove extra/unwanted columns
+  select(-pop, -other) |> 
+  # Remove the total rows
+  filter(gender != "Total") |>
+  # Group by and summarization
+  summarize(
+    population = sum(population),
+    .by = c(former_region, state, gender, age_category)
+  )
+```
+
+The `separate()` function handles additional pieces with the `extra` argument, which can be set to either "warn," "drop," or "merge." However, if there are fewer pieces, then `separate()` handles them with the `fill` argument, which can be set to either "warn" (this is the default option; it emits a warning and fills in the missing pieces from the right), "right" ('fill with missing values on the right'), and "left" ('fill with missing values on the left').
+
+## Now
+
+```{r}
+# Showcase the separate() function
+separate_wider_delim_tbl <-
+  case_match_tbl |>
+  # Split gender column
+  separate_wider_delim(
+    gender,
+    delim    = " ",
+    names    = c(NA, "gender"),
+    too_many = "drop" # drop extra column
+  ) |>
+  # Remove the total rows
+  filter(gender != "Total") |>
+  # Group by and summarization
+  summarize(
+    population = sum(population),
+    .by = c(former_region, state, gender, age_category)
+  )
+```
+
+# Using the `NA`
+
+```{r}
+# Showcase the separate() function
+separate_wider_delim_tbl <-
+  case_match_tbl |>
+  # Split gender column
+  separate_wider_delim(
+    gender,
+    delim    = " ",
+    names    = c(NA, "gender", NA),
+    # too_many = "drop" # drop extra column
+  ) |>
+  # Remove the total rows
+  filter(gender != "Total") |>
+  # Group by and summarization
+  summarize(
+    population = sum(population),
+    .by = c(former_region, state, gender, age_category)
+  )
+```
+
+The newer variants of `separate()`: `separate_wider_delim()` and `separate_wider_position()` handle fewer or extra pieces with the `too_few` and `too_many` arguments, which can be set to "error," "debug," "align_start," or "align_end"; and "error," "debug," "drop," or "merge," respectively.
+Further, a user can also set extra columns to `NA` to exclude them from the output - this is handy and saves time!
+
+# Closing Remarks
+
+In this tutorial, we've showcased the updates to the `case_when()` function and highlighted its simplified variant, `case_match()`, which involves less typing and is much cleaner. `case_when()` has been optimized to handle `NA` beautifully well. Users can now set `.default` to `NA` without specifying each NA type.
+
+Further, explained that `separate()` from the `tidyr` package has been superseded by its newer variants: `separate_wider_delim()`, `separate_wider_position()`, and `separate_wider_regex()`, which split a character column into multiple columns with a delimiter, fixed widths, and regular expression matches, respectively.
+We hope you will find this tutorial helpful. If you do, please drop us a comment, share our post, and follow us on LinkedIn at **tongakuot** and YouTube at **AlierwaiDataStudio**.
+
+# References
+1. Çetinkaya-Rundel, M.(2023, August 14). *What's new in the tidyverse?* YouTube. https://www.youtube.com/watch?v=AuQOy06Dlr8&t=2963s

@@ -1,0 +1,14 @@
+{
+  "hash": "f023f4d56289b6ee7fee60384477423d",
+  "result": {
+    "markdown": "---\ntitle: \"Tutorial\"\nauthor: \"Alier Reng\"\neditor: visual\n---\n\n\n## Loading the Required Libraries\n\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(tidyverse)\n```\n:::\n\n\n## Importing dataset\n\n\n::: {.cell}\n\n```{.r .cell-code}\nssd_census_2008 <- \n\tvroom::vroom(\n\t\t\"../tutorials/posts/ss_2008_census_data_raw.csv\", show_col_types = FALSE\n) |> \n\t\n\tselect(\n\t\tstate = `Region Name`, \n\t\tgender = `Variable Name`, \n\t\tage_category = `Age Name`, \n\t\tpopulation = `2008`\n\t) |> \n\t\n\t# Showcase case_when() function\n\tfilter(\n\t\t!is.na(gender),\n\t\tage_category != \"Total\"\n\t) |> \n\tmutate(\n\t\tstate = state |> str_to_lower(),\n\t\tformer_region = case_when(\n\t\t\tstr_detect(state, \"equatoria\")    ~ \"Greater Equatoria\",\n\t\t\tstr_detect(state, \"upper nile\")   ~ \"Greater Upper Nile\",\n\t\t\tstr_detect(state, \"unity\")        ~ \"Greater Upper Nile\",\n\t\t\tstr_detect(state, \"jonglei\")      ~ \"Greater Upper Nile\",\n\t\t\t.default = \"Greater Bahr el Ghazal\"\n\t\t)\n\t) |> \n\t\n\tmutate(\n\t\tage_category = case_when(\n\t\t\tage_category %in% c(\"0 to 4\", \"5 to 9\", \"10 to 14\") ~ \"0-14\",\n\t\t\tage_category %in% c(\"15 to 19\", \"20 to 24\") ~ \"15-24\",\n\t\t\tage_category %in% c(\"25 to 29\", \"30 to 34\") ~ \"25-34\",\n\t\t\tage_category %in% c(\"35 to 39\", \"40 to 44\") ~ \"35-44\",\n\t\t\tage_category %in% c(\"45 to 49\", \"50 to 54\") ~ \"45-54\",\n\t\t\tage_category %in% c(\"55 to 59\", \"60 to 64\") ~ \"55-64\",\n\t\t\t.default = NA\n\t\t\t\n\t\t)\n\t)\n```\n:::\n\n::: {.cell}\n\n```{.r .cell-code}\nset.seed(254)\nstudent_grades <- \n\ttibble(\n\tname = c('akuien', 'ayen', 'deng', \n           'tut', 'gatwich', 'miayar', \n           'bok', 'garang', 'ujulo', \n           'nyapal', 'chuol', 'aluel',\n\t\t\t\t\t 'nyandeng', 'nyakang', 'Ariet'\n\t\t\t\t\t ),\n\tgrade = rnorm(n = 15, mean = 80, sd = 15)\n\t) |> \n\t\n\tmutate(\n\t\tname  = str_to_title(name),\n\t\tgrade = if_else(\n\t\t\tround(grade, 1) > 100, \n\t\t\t100, \n\t\t\tround(grade, 1)\n\t\t\t)\n\t)\n\n# Print the dataset\nstudent_grades\n```\n\n::: {.cell-output .cell-output-stdout}\n```\n# A tibble: 15 × 2\n   name     grade\n   <chr>    <dbl>\n 1 Akuien    76.1\n 2 Ayen     100  \n 3 Deng      82  \n 4 Tut       72.8\n 5 Gatwich   95.3\n 6 Miayar    84.5\n 7 Bok       78.1\n 8 Garang   100  \n 9 Ujulo     50.7\n10 Nyapal    86  \n11 Chuol     73.3\n12 Aluel     88.3\n13 Nyandeng 100  \n14 Nyakang   75.6\n15 Ariet     78.1\n```\n:::\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

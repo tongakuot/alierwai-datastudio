@@ -7,9 +7,9 @@
 **Alierwai DataStudio** is a platform for knowledge sharing and continuous learning.
 With a focus on data science tutorials, statistics, and mathematics, it aims to inspire and empower individuals to enhance their skills and achieve their goals.
 
-::: {.clumns width="100%"}
+
 ![](images/logo.png)
-:::
+
 
 # What We Do
 
@@ -18,9 +18,9 @@ With proficiency in R and Python programming languages, I aspire to make a posit
 Despite limited resources, I am committed to helping others learn data science, statistics, and mathematics from anywhere, at any time.
 Through my exceptional tutoring and mentorship services, I aim to empower individuals to achieve their data science goals and secure promising career opportunities in today's rapidly evolving job market.
 
-::: {.clumns width="100%"}
+
 ![](images/ads-yt-banner-2024.png)
-:::
+
 
 # Acknowledgments
 

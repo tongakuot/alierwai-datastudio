@@ -1,0 +1,19 @@
+---
+title: "Contact us"
+sidebar: false
+comments: false
+page-layout: article
+toc: false
+title-block-banner: true
+---
+## Connect with Us
+At ADS, our goal is to provide you with the essential skills necessary to advance your data science career. We understand that navigating through the vast amount of data science content available online can be overwhelming, and that’s why we strive to help you identify relevant and valuable information to achieve your goals. To become a successful data scientist or analyst, you need guidance and mentorship from industry experts who have demonstrated their abilities on real-world data science projects. At ADS, we offer you the opportunity to explore your potential and embark on a journey toward a fulfilling career in data science.
+
+**Email:** [info@alierwaidatastudio.com](mailto:info@alierwaidatastudio.com)
+
+**GitHub:** [@tongakuot](https://github.com/tongakuot)
+
+**Facebook:** [@NileQuantumInsights](https://www.facebook.com/NileQuantumInsights)
+
+**LinkedIn:** [@tongakuot](https://www.linkedin.com/in/tongakuot)
+

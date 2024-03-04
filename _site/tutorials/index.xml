@@ -1,0 +1,1727 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss  xmlns:atom="http://www.w3.org/2005/Atom" 
+      xmlns:media="http://search.yahoo.com/mrss/" 
+      xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+      xmlns:dc="http://purl.org/dc/elements/1.1/" 
+      version="2.0">
+<channel>
+<title>Alierwai DataStudio</title>
+<link>https://alierwaidatastudio.com/tutorials/index.html</link>
+<atom:link href="https://alierwaidatastudio.com/tutorials/index.xml" rel="self" type="application/rss+xml"/>
+<description></description>
+<image>
+<url>https://alierwaidatastudio.com/images/logo.png</url>
+<title>Alierwai DataStudio</title>
+<link>https://alierwaidatastudio.com/tutorials/index.html</link>
+</image>
+<generator>quarto-1.3.340</generator>
+<lastBuildDate>Thu, 04 Jan 2024 05:00:00 GMT</lastBuildDate>
+<item>
+  <title>Showcasing the dplyr case_when() and case_match() Functions</title>
+  <dc:creator>Alier Reng</dc:creator>
+  <link>https://alierwaidatastudio.com/tutorials/posts/2024/01/04/tutorial-02.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<section id="motivation" class="level1">
+<h1>Motivation</h1>
+<p>While reading <strong>Effective Pandas 2</strong> by <strong>Matt Harrison</strong>, I learned about the new <code>.case_when()</code> method in <strong>Pandas 2</strong>, which is a total life changer for <code>pandas</code> users who have longed for such a function for a long time. However, as an R programmer, I decided to review the <code>dplyr case_when()</code> documentation and learned that this <strong>lifesaving</strong> function has been updated. The recently released version of the <code>case_when()</code> function now includes the following arguments:</p>
+<blockquote class="blockquote">
+<p>case_when(…, .default = NULL, .ptype = NULL, .size = NULL)</p>
+</blockquote>
+<p>You can read more about <code>case_when()</code> function <a href="https://dplyr.tidyverse.org/reference/case_when.html">here!</a></p>
+</section>
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>The <code>case_when()</code> and <code>case_match()</code> functions from the dplyr package provide a flexible way to create conditional statements based on multiple conditions. In this tutorial, we showcase these two functions and conclude with a bonus section highlighting the <code>separate_wider_delim()</code> function from the <code>tidyr</code> package.</p>
+<p>The <a href="https://dplyr.tidyverse.org/reference/case_when.html">dplyr website</a> describes the amazing <code>case_when()</code> function as follows:</p>
+<blockquote class="blockquote">
+<p>This function allows you to vectorise multiple <a href="https://dplyr.tidyverse.org/reference/if_else.html"><code>if_else()</code></a> statements. Each case is evaluated sequentially and the first match for each element determines the corresponding value in the output vector. If no cases match, the <code>.default</code> is used as a final “else” statment.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p><code>case_when()</code> is an R equivalent of the SQL “searched” <code>CASE WHEN</code> statement.</p>
+</blockquote>
+</section>
+<section id="getting-started" class="level1">
+<h1>Getting Started</h1>
+<section id="loading-the-required-libraries" class="level2">
+<h2 class="anchored" data-anchor-id="loading-the-required-libraries">Loading the Required Libraries</h2>
+<p>We will load the entire tidyverse meta-package (which contains 9 packages) for this tutorial, although we will only use the <code>dplyr</code>, <code>tidyr</code>, and <code>stringr</code> packages. Additionally, we will suppress warnings and notifications by setting the warning and message options to false, respectively.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(tidyverse)</span></code></pre></div>
+</div>
+</section>
+<section id="loading-the-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="loading-the-dataset">Loading the dataset</h2>
+<p>We will use the <code>vroom</code> package instead of the <code>readr</code> package to load the South Sudan 2008 census dataset. Even though our dataset is too small for the speed to matter, <code>vroom</code> is faster than <code>readr</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Load the data -----------------</span></span>
+<span id="cb2-2">ssd_census_2008 <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span></span>
+<span id="cb2-3">  vroom<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">vroom</span>(</span>
+<span id="cb2-4">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"ss_2008_census_data_raw.csv"</span>,</span>
+<span id="cb2-5">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">show_col_types =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span></span>
+<span id="cb2-6">  ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb2-7">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">select</span>(</span>
+<span id="cb2-8">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">state        =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">Region Name</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span>,</span>
+<span id="cb2-9">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">gender       =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">Variable Name</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span>,</span>
+<span id="cb2-10">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">age_category =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">Age Name</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span>,</span>
+<span id="cb2-11">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">population   =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">2008</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span></span>
+<span id="cb2-12">  ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb2-13">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">filter</span>(</span>
+<span id="cb2-14">    <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">is.na</span>(gender),</span>
+<span id="cb2-15">    age_category <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Total"</span></span>
+<span id="cb2-16">  )</span></code></pre></div>
+</div>
+</section>
+</section>
+<section id="case_when-example" class="level1">
+<h1><code>case_when()</code> Example</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Showcase case_when() function ---------</span></span>
+<span id="cb3-2">case_when_tbl <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span></span>
+<span id="cb3-3">  ssd_census_2008 <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb3-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(</span>
+<span id="cb3-5">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">state =</span> state <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">str_to_lower</span>(),</span>
+<span id="cb3-6">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">former_region =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">case_when</span>(</span>
+<span id="cb3-7">      <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">str_detect</span>(state, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"equatoria"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Greater Equatoria"</span>,</span>
+<span id="cb3-8">      <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">str_detect</span>(state, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"upper nile"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Greater Upper Nile"</span>,</span>
+<span id="cb3-9">      <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">str_detect</span>(state, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"unity"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Greater Upper Nile"</span>,</span>
+<span id="cb3-10">      <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">str_detect</span>(state, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"jonglei"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Greater Upper Nile"</span>,</span>
+<span id="cb3-11">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">.default =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Greater Bahr el Ghazal"</span></span>
+<span id="cb3-12">    )</span>
+<span id="cb3-13">  ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb3-14">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(</span>
+<span id="cb3-15">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">age_category =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">case_when</span>(</span>
+<span id="cb3-16">      age_category <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%in%</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"0 to 4"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"5 to 9"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"10 to 14"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"0-14"</span>,</span>
+<span id="cb3-17">      age_category <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%in%</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"15 to 19"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"20 to 24"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"15-24"</span>,</span>
+<span id="cb3-18">      age_category <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%in%</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"25 to 29"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"30 to 34"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"25-34"</span>,</span>
+<span id="cb3-19">      age_category <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%in%</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"35 to 39"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"40 to 44"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"35-44"</span>,</span>
+<span id="cb3-20">      age_category <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%in%</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"45 to 49"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"50 to 54"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"45-54"</span>,</span>
+<span id="cb3-21">      age_category <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%in%</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"55 to 59"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"60 to 64"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"55-64"</span>,</span>
+<span id="cb3-22">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">.default =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"65+"</span></span>
+<span id="cb3-23">    )</span>
+<span id="cb3-24">  ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb3-25">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Group by and summarization</span></span>
+<span id="cb3-26">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">summarize</span>(</span>
+<span id="cb3-27">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">population =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(population),</span>
+<span id="cb3-28">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">.by =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(former_region, state, gender, age_category)</span>
+<span id="cb3-29">  )</span></code></pre></div>
+</div>
+</section>
+<section id="case_match-example" class="level1">
+<h1><code>case_match()</code> Example</h1>
+<p>According to the <code>dplyr</code> website, the <code>case_match()</code> function is a “general vectorized switch().” Below is a summary from the website:</p>
+<blockquote class="blockquote">
+<p>This function allows you to vectorise multiple switch() statements. Each case is evaluated sequentially and the first match for each element determines the corresponding value in the output vector. If no cases match, the .default is used. case_match() is an R equivalent of the SQL “simple” CASE WHEN statement.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Connection to case_when(). While case_when() uses logical expressions on the left-hand side of the formula, case_match() uses values to match against .x with.</p>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Showcase case_match() function ------</span></span>
+<span id="cb4-2">case_match_tbl <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span></span>
+<span id="cb4-3">  ssd_census_2008 <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb4-4">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># add former regions of South Sudan</span></span>
+<span id="cb4-5">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(</span>
+<span id="cb4-6">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">state =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">str_to_lower</span>(state),</span>
+<span id="cb4-7">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># former regions</span></span>
+<span id="cb4-8">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">former_region =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">case_match</span>(</span>
+<span id="cb4-9">      state,</span>
+<span id="cb4-10">      <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(</span>
+<span id="cb4-11">        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"unity"</span>,</span>
+<span id="cb4-12">        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"upper nile"</span>,</span>
+<span id="cb4-13">        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"jonglei"</span></span>
+<span id="cb4-14">      ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Greater Upper Nile"</span>,</span>
+<span id="cb4-15">      <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(</span>
+<span id="cb4-16">        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"central equatoria"</span>,</span>
+<span id="cb4-17">        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"western equatoria"</span>,</span>
+<span id="cb4-18">        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"eastern equatoria"</span></span>
+<span id="cb4-19">      ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Greater Equatoria"</span>,</span>
+<span id="cb4-20">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">.default =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Greater Bahr el Ghazal"</span></span>
+<span id="cb4-21">    ),</span>
+<span id="cb4-22">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># age category</span></span>
+<span id="cb4-23">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">age_category =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">case_match</span>(</span>
+<span id="cb4-24">      age_category,</span>
+<span id="cb4-25">      <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"0 to 4"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"5 to 9"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"10 to 14"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"0-14"</span>,</span>
+<span id="cb4-26">      <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"15 to 19"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"20 to 24"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"15-24"</span>,</span>
+<span id="cb4-27">      <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"25 to 29"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"30 to 34"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"25-34"</span>,</span>
+<span id="cb4-28">      <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"35 to 39"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"40 to 44"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"35-44"</span>,</span>
+<span id="cb4-29">      <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"45 to 49"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"50 to 54"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"45-54"</span>,</span>
+<span id="cb4-30">      <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"55 to 59"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"60 to 64"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"55-64"</span>,</span>
+<span id="cb4-31">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">.default =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"65+"</span></span>
+<span id="cb4-32">    )</span>
+<span id="cb4-33">  )</span></code></pre></div>
+</div>
+<p>Using the same dataset, the preceding code snippets showed how to implement both the <code>case_when()</code> and <code>case_match()</code> functions. Here, it is vividly clear that these two functions are similar, but <code>case_match()</code> involves less typing, and it seems to be a bit cleaner than the <code>case_when()</code>.</p>
+</section>
+<section id="bonus-tip" class="level1">
+<h1>Bonus Tip</h1>
+<p>In this final section, as a bonus, we’ll throw in the new updates about the <code>separate()</code> function from the <code>tidyr</code> package. Below is what we gleaned from the package website:</p>
+<blockquote class="blockquote">
+<p>separate() has been superseded in favour of separate_wider_position() and separate_wider_delim() because the two functions make the two uses more obvious, the API is more polished, and the handling of problems is better. Superseded functions will not go away, but will only receive critical bug fixes.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Given either a regular expression or a vector of character positions, separate() turns a single character column into multiple columns.</p>
+</blockquote>
+<section id="tidying-column-values-with-the-separate-variants" class="level2">
+<h2 class="anchored" data-anchor-id="tidying-column-values-with-the-separate-variants">Tidying Column Values with the <code>separate()</code> variants</h2>
+<p>In this section, we’ll demonstrate how to use the <code>separate_wider_delim()</code> function, the most commonly used of the two variants of the <code>separate()</code> function. First, we will show how we solved the same problem previously and then show the updated variant.</p>
+<section id="we-are-trying-to-solve" class="level3">
+<h3 class="anchored" data-anchor-id="we-are-trying-to-solve">We are trying to solve</h3>
+<p>Here, we aim to separate the gender column into three new columns but only keep the middle column with gender rows. Here are the unique values currently in the gender column: “Population, Total (Number),” “Population, Male (Number),” and “Population, Female (Number).”</p>
+</section>
+</section>
+<section id="before" class="level2">
+<h2 class="anchored" data-anchor-id="before">Before</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Showcase the separate() function</span></span>
+<span id="cb5-2">separate_before_tbl <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span></span>
+<span id="cb5-3">  case_match_tbl <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb5-4">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Split gender column into: pop, gender, and other</span></span>
+<span id="cb5-5">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">separate</span>(</span>
+<span id="cb5-6">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">col =</span> gender, </span>
+<span id="cb5-7">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">into =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"pop"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"gender"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"other"</span>), </span>
+<span id="cb5-8">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">sep =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">" "</span></span>
+<span id="cb5-9">  ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb5-10">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Remove extra/unwanted columns</span></span>
+<span id="cb5-11">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">select</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>pop, <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>other) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> </span>
+<span id="cb5-12">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Remove the total rows</span></span>
+<span id="cb5-13">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">filter</span>(gender <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Total"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb5-14">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Group by and summarization</span></span>
+<span id="cb5-15">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">summarize</span>(</span>
+<span id="cb5-16">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">population =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(population),</span>
+<span id="cb5-17">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">.by =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(former_region, state, gender, age_category)</span>
+<span id="cb5-18">  )</span></code></pre></div>
+</div>
+<p>The <code>separate()</code> function handles additional pieces with the <code>extra</code> argument, which can be set to either “warn,” “drop,” or “merge.” However, if there are fewer pieces, then <code>separate()</code> handles them with the <code>fill</code> argument, which can be set to either “warn” (this is the default option; it emits a warning and fills in the missing pieces from the right), “right” (‘fill with missing values on the right’), and “left” (‘fill with missing values on the left’).</p>
+</section>
+<section id="now" class="level2">
+<h2 class="anchored" data-anchor-id="now">Now</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Showcase the separate() function</span></span>
+<span id="cb6-2">separate_wider_delim_tbl <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span></span>
+<span id="cb6-3">  case_match_tbl <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb6-4">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Split gender column</span></span>
+<span id="cb6-5">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">separate_wider_delim</span>(</span>
+<span id="cb6-6">    gender,</span>
+<span id="cb6-7">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">delim    =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">" "</span>,</span>
+<span id="cb6-8">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">names    =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">NA</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"gender"</span>),</span>
+<span id="cb6-9">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">too_many =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"drop"</span> <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># drop extra column</span></span>
+<span id="cb6-10">  ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb6-11">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Remove the total rows</span></span>
+<span id="cb6-12">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">filter</span>(gender <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Total"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb6-13">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Group by and summarization</span></span>
+<span id="cb6-14">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">summarize</span>(</span>
+<span id="cb6-15">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">population =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(population),</span>
+<span id="cb6-16">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">.by =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(former_region, state, gender, age_category)</span>
+<span id="cb6-17">  )</span></code></pre></div>
+</div>
+</section>
+</section>
+<section id="using-the-na" class="level1">
+<h1>Using the <code>NA</code></h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Showcase the separate() function</span></span>
+<span id="cb7-2">separate_wider_delim_tbl <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span></span>
+<span id="cb7-3">  case_match_tbl <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb7-4">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Split gender column</span></span>
+<span id="cb7-5">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">separate_wider_delim</span>(</span>
+<span id="cb7-6">    gender,</span>
+<span id="cb7-7">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">delim    =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">" "</span>,</span>
+<span id="cb7-8">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">names    =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">NA</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"gender"</span>, <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">NA</span>),</span>
+<span id="cb7-9">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># too_many = "drop" # drop extra column</span></span>
+<span id="cb7-10">  ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb7-11">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Remove the total rows</span></span>
+<span id="cb7-12">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">filter</span>(gender <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Total"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb7-13">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Group by and summarization</span></span>
+<span id="cb7-14">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">summarize</span>(</span>
+<span id="cb7-15">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">population =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(population),</span>
+<span id="cb7-16">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">.by =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(former_region, state, gender, age_category)</span>
+<span id="cb7-17">  )</span></code></pre></div>
+</div>
+<p>The newer variants of <code>separate()</code>: <code>separate_wider_delim()</code> and <code>separate_wider_position()</code> handle fewer or extra pieces with the <code>too_few</code> and <code>too_many</code> arguments, which can be set to “error,” “debug,” “align_start,” or “align_end”; and “error,” “debug,” “drop,” or “merge,” respectively. Further, a user can also set extra columns to <code>NA</code> to exclude them from the output - this is handy and saves time!</p>
+</section>
+<section id="closing-remarks" class="level1">
+<h1>Closing Remarks</h1>
+<p>In this tutorial, we’ve showcased the updates to the <code>case_when()</code> function and highlighted its simplified variant, <code>case_match()</code>, which involves less typing and is much cleaner. <code>case_when()</code> has been optimized to handle <code>NA</code> beautifully well. Users can now set <code>.default</code> to <code>NA</code> without specifying each NA type.</p>
+<p>Further, explained that <code>separate()</code> from the <code>tidyr</code> package has been superseded by its newer variants: <code>separate_wider_delim()</code>, <code>separate_wider_position()</code>, and <code>separate_wider_regex()</code>, which split a character column into multiple columns with a delimiter, fixed widths, and regular expression matches, respectively. We hope you will find this tutorial helpful. If you do, please drop us a comment, share our post, and follow us on LinkedIn at <strong>tongakuot</strong> and YouTube at <strong>AlierwaiDataStudio</strong>.</p>
+</section>
+<section id="references" class="level1">
+<h1>References</h1>
+<ol type="1">
+<li>Çetinkaya-Rundel, M.(2023, August 14). <em>What’s new in the tidyverse?</em> YouTube. https://www.youtube.com/watch?v=AuQOy06Dlr8&amp;t=2963s</li>
+</ol>
+
+
+</section>
+
+ ]]></description>
+  <category>Data Science</category>
+  <category>Data Wrangling</category>
+  <category>R</category>
+  <guid>https://alierwaidatastudio.com/tutorials/posts/2024/01/04/tutorial-02.html</guid>
+  <pubDate>Thu, 04 Jan 2024 05:00:00 GMT</pubDate>
+  <media:content url="https://alierwaidatastudio.com/tutorials/posts/2024/01/04/images/case_when_img.png" medium="image" type="image/png" height="162" width="144"/>
+</item>
+<item>
+  <title>Solving R 4 Data Science, 2nd-edition: Section 25.3.5 Exercises.</title>
+  <dc:creator>Alier Reng</dc:creator>
+  <link>https://alierwaidatastudio.com/tutorials/posts/2023/11/11/tutorial-01.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<section id="motivation" class="level1">
+<h1>Motivation</h1>
+<p>To practice R programming through hands-on exercises, as it is the best way to enhance your programming skills.</p>
+<p>In this tutorial, we will solve problems from Section 25.3.5 of the famous <strong>R 4 Data Science by Hadley Wickham et al.</strong> Let’s get started!</p>
+</section>
+<section id="loading-required-libraries" class="level1">
+<h1>Loading Required Libraries</h1>
+<p>In this section, we will load <code>tidyverse</code> and <code>nycflights13</code> packages. We will set <code>warning</code> and <code>message</code> to false to suppress warnings and notifications.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Libraries</span></span>
+<span id="cb1-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(tidyverse)</span>
+<span id="cb1-3"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(nycflights13)</span></code></pre></div>
+</div>
+</section>
+<section id="section-25.3.5-exercises" class="level1 page-columns page-full">
+<h1>Section 25.3.5 Exercises</h1>
+<ol type="1">
+<li>Using the datasets from nycflights13, write a function that:</li>
+</ol>
+<ul>
+<li>Finds all flights that were cancelled (i.e.&nbsp;is.na(arr_time)) or delayed by more than an hour. About the author</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"> <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Subset flights data</span></span>
+<span id="cb2-2">canceled_or_delayed_flights <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> </span>
+<span id="cb2-3">    flights <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb2-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">filter</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">is.na</span>(arr_time) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|</span> dep_delay <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb2-5"></span>
+<span id="cb2-6"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Write a function</span></span>
+<span id="cb2-7">filter_severe <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">function</span>(data, condition) {</span>
+<span id="cb2-8">  data <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb2-9">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">filter</span>({{ condition }})</span>
+<span id="cb2-10">}</span>
+<span id="cb2-11"></span>
+<span id="cb2-12"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Let's test our function</span></span>
+<span id="cb2-13">canceled_or_delayed_flights <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> </span>
+<span id="cb2-14">    flights <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> </span>
+<span id="cb2-15">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">filter_severe</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">is.na</span>(arr_time) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|</span> dep_delay <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb2-16"></span>
+<span id="cb2-17"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Display the results</span></span>
+<span id="cb2-18">canceled_or_delayed_flights <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> </span>
+<span id="cb2-19">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">slice_head</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">n =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> </span>
+<span id="cb2-20">    knitr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">kable</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">align =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"c"</span>)</span></code></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 2%">
+<col style="width: 5%">
+<col style="width: 8%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 8%">
+<col style="width: 5%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 3%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 3%">
+<col style="width: 4%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">year</th>
+<th style="text-align: center;">month</th>
+<th style="text-align: center;">day</th>
+<th style="text-align: center;">dep_time</th>
+<th style="text-align: center;">sched_dep_time</th>
+<th style="text-align: center;">dep_delay</th>
+<th style="text-align: center;">arr_time</th>
+<th style="text-align: center;">sched_arr_time</th>
+<th style="text-align: center;">arr_delay</th>
+<th style="text-align: center;">carrier</th>
+<th style="text-align: center;">flight</th>
+<th style="text-align: center;">tailnum</th>
+<th style="text-align: center;">origin</th>
+<th style="text-align: center;">dest</th>
+<th style="text-align: center;">air_time</th>
+<th style="text-align: center;">distance</th>
+<th style="text-align: center;">hour</th>
+<th style="text-align: center;">minute</th>
+<th style="text-align: center;">time_hour</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">2013</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">517</td>
+<td style="text-align: center;">515</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">830</td>
+<td style="text-align: center;">819</td>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">UA</td>
+<td style="text-align: center;">1545</td>
+<td style="text-align: center;">N14228</td>
+<td style="text-align: center;">EWR</td>
+<td style="text-align: center;">IAH</td>
+<td style="text-align: center;">227</td>
+<td style="text-align: center;">1400</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">15</td>
+<td style="text-align: center;">2013-01-01 05:00:00</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">2013</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">533</td>
+<td style="text-align: center;">529</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">850</td>
+<td style="text-align: center;">830</td>
+<td style="text-align: center;">20</td>
+<td style="text-align: center;">UA</td>
+<td style="text-align: center;">1714</td>
+<td style="text-align: center;">N24211</td>
+<td style="text-align: center;">LGA</td>
+<td style="text-align: center;">IAH</td>
+<td style="text-align: center;">227</td>
+<td style="text-align: center;">1416</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">29</td>
+<td style="text-align: center;">2013-01-01 05:00:00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">2013</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">542</td>
+<td style="text-align: center;">540</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">923</td>
+<td style="text-align: center;">850</td>
+<td style="text-align: center;">33</td>
+<td style="text-align: center;">AA</td>
+<td style="text-align: center;">1141</td>
+<td style="text-align: center;">N619AA</td>
+<td style="text-align: center;">JFK</td>
+<td style="text-align: center;">MIA</td>
+<td style="text-align: center;">160</td>
+<td style="text-align: center;">1089</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">40</td>
+<td style="text-align: center;">2013-01-01 05:00:00</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">2013</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">608</td>
+<td style="text-align: center;">600</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">807</td>
+<td style="text-align: center;">735</td>
+<td style="text-align: center;">32</td>
+<td style="text-align: center;">MQ</td>
+<td style="text-align: center;">3768</td>
+<td style="text-align: center;">N9EAMQ</td>
+<td style="text-align: center;">EWR</td>
+<td style="text-align: center;">ORD</td>
+<td style="text-align: center;">139</td>
+<td style="text-align: center;">719</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">2013-01-01 06:00:00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">2013</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">611</td>
+<td style="text-align: center;">600</td>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">945</td>
+<td style="text-align: center;">931</td>
+<td style="text-align: center;">14</td>
+<td style="text-align: center;">UA</td>
+<td style="text-align: center;">303</td>
+<td style="text-align: center;">N532UA</td>
+<td style="text-align: center;">JFK</td>
+<td style="text-align: center;">SFO</td>
+<td style="text-align: center;">366</td>
+<td style="text-align: center;">2586</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">2013-01-01 06:00:00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>In the code snippet above, we first wrote the code for solving the problem and then converted our code into a function as instructed. Next, we tested our function to ensure that it works as expected.</p>
+<ul>
+<li>Counts the number of cancelled flights and the number of flights delayed by more than an hour.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Write a function</span></span>
+<span id="cb3-2">summarize_severe <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">function</span>(data, var) {</span>
+<span id="cb3-3">  data <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb3-4">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">summarize</span>(</span>
+<span id="cb3-5">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">n =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>({{ var }})</span>
+<span id="cb3-6">    )</span>
+<span id="cb3-7">}</span>
+<span id="cb3-8"></span>
+<span id="cb3-9"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Test the function</span></span>
+<span id="cb3-10">df_0 <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> flights <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb3-11">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_by</span>(dest) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb3-12">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">summarize_severe</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">is.na</span>(arr_time) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|</span> dep_delay <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb3-13"></span>
+<span id="cb3-14"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># OR ------------------------------------------------</span></span>
+<span id="cb3-15"></span>
+<span id="cb3-16"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># We could do this:</span></span>
+<span id="cb3-17">summarise_severe <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">function</span>(data, group_var, var) {</span>
+<span id="cb3-18">  data <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb3-19">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">summarize</span>(</span>
+<span id="cb3-20">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">total =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>({{ var }}),</span>
+<span id="cb3-21">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">.by =</span> {{ group_var }}</span>
+<span id="cb3-22">    )</span>
+<span id="cb3-23">}</span>
+<span id="cb3-24"></span>
+<span id="cb3-25"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Test the second function</span></span>
+<span id="cb3-26">df_1 <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span></span>
+<span id="cb3-27">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">summarise_severe</span>(</span>
+<span id="cb3-28">    flights,</span>
+<span id="cb3-29">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">var =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">is.na</span>(arr_time) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|</span> dep_delay <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>),</span>
+<span id="cb3-30">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">group_var =</span> dest</span>
+<span id="cb3-31">  )</span></code></pre></div>
+</div>
+<p>In the code snippet above, we solved a problem using two approaches. Firstly, we defined the function <code>summarize_severe()</code> and used it along with the <code>group_by()</code> function to calculate the total number of canceled flights and flights delayed by over one hour. Secondly, we defined the function <code>summarise_severe()</code> and used it with the <code>.by</code> argument in the <code>summarize()</code> function to calculate the same total.</p>
+<p>We observed that both approaches produced similar results (we prefer the approach with the .by argument).</p>
+<ul>
+<li><p>Finds all flights that were cancelled or delayed by more than a user supplied number of hours.</p>
+<p>We solved the question below with our filter function, <code>filter_severe()</code>, from problem 1 above.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Use a user supplied number of hours</span></span>
+<span id="cb4-2">df_with_user_supplied_hours <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span></span>
+<span id="cb4-3">  flights <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb4-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">filter_severe</span>(</span>
+<span id="cb4-5">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">is.na</span>(arr_time) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|</span> dep_delay <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span></span>
+<span id="cb4-6">  )</span></code></pre></div>
+</div>
+<ul>
+<li>Summarizes the weather to compute the minimum, mean, and maximum, of a user supplied variable:</li>
+</ul>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hint
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>By default, across() renames resulting columns with the pattern: {function}{column_name}, for example, temp_min. You can override this behavior by setting the .names option to “{.fn}{.col}”.</p>
+</div>
+</div>
+</div></div><div class="cell">
+<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Solution</span></span>
+<span id="cb5-2">weather <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb5-3">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">summarize</span>(</span>
+<span id="cb5-4">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Temperature </span></span>
+<span id="cb5-5">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">min_temp  =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">min</span>(temp, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">na.rm =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>),</span>
+<span id="cb5-6">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">mean_temp =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mean</span>(temp, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">na.rm =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>),</span>
+<span id="cb5-7">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">max_temp  =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">max</span>(temp, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">na.rm =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>),</span>
+<span id="cb5-8">    </span>
+<span id="cb5-9">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Pressure</span></span>
+<span id="cb5-10">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">min_pressure  =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">min</span>(pressure, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">na.rm =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>),</span>
+<span id="cb5-11">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">mean_pressure =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mean</span>(pressure, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">na.rm =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>),</span>
+<span id="cb5-12">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">max_pressure  =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">max</span>(pressure, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">na.rm =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>),</span>
+<span id="cb5-13">    </span>
+<span id="cb5-14">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Precipitation</span></span>
+<span id="cb5-15">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">min_precip  =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">min</span>(precip, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">na.rm =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>),</span>
+<span id="cb5-16">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">mean_precip =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mean</span>(precip, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">na.rm =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>),</span>
+<span id="cb5-17">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">max_precip  =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">max</span>(precip, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">na.rm =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>),</span>
+<span id="cb5-18">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">.groups =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"drop"</span></span>
+<span id="cb5-19">  ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> </span>
+<span id="cb5-20">    knitr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">kable</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">align =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"c"</span>)</span></code></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 12%">
+<col style="width: 13%">
+<col style="width: 12%">
+<col style="width: 10%">
+<col style="width: 11%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">min_temp</th>
+<th style="text-align: center;">mean_temp</th>
+<th style="text-align: center;">max_temp</th>
+<th style="text-align: center;">min_pressure</th>
+<th style="text-align: center;">mean_pressure</th>
+<th style="text-align: center;">max_pressure</th>
+<th style="text-align: center;">min_precip</th>
+<th style="text-align: center;">mean_precip</th>
+<th style="text-align: center;">max_precip</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">10.94</td>
+<td style="text-align: center;">55.26039</td>
+<td style="text-align: center;">100.04</td>
+<td style="text-align: center;">983.8</td>
+<td style="text-align: center;">1017.899</td>
+<td style="text-align: center;">1042.1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0.0044691</td>
+<td style="text-align: center;">1.21</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Write a function</span></span>
+<span id="cb6-2">summarize_weather <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">function</span>(data, vars) {</span>
+<span id="cb6-3">  data <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb6-4">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">summarize</span>(</span>
+<span id="cb6-5">      <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">across</span>({{ vars }},</span>
+<span id="cb6-6">        <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">list</span>(</span>
+<span id="cb6-7">          <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">min  =</span> \(x) <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">min</span>(x, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">na.rm =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>),</span>
+<span id="cb6-8">          <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">mean =</span> \(x) <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mean</span>(x, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">na.rm =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>),</span>
+<span id="cb6-9">          <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">max  =</span> \(x) <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">max</span>(x, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">na.rm =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>)</span>
+<span id="cb6-10">        ),</span>
+<span id="cb6-11">        <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">.names =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"{.fn}_{.col}"</span></span>
+<span id="cb6-12">      )</span>
+<span id="cb6-13">    ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb6-14">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">across</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">where</span>(is.numeric), \(x) <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">round</span>(x, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)))</span>
+<span id="cb6-15">}</span>
+<span id="cb6-16"></span>
+<span id="cb6-17"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Test the function</span></span>
+<span id="cb6-18">weather <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> </span>
+<span id="cb6-19">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">summarize_weather</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(temp, pressure, precip)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> </span>
+<span id="cb6-20">    knitr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">kable</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">align =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"c"</span>)</span></code></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 12%">
+<col style="width: 13%">
+<col style="width: 12%">
+<col style="width: 10%">
+<col style="width: 11%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">min_temp</th>
+<th style="text-align: center;">mean_temp</th>
+<th style="text-align: center;">max_temp</th>
+<th style="text-align: center;">min_pressure</th>
+<th style="text-align: center;">mean_pressure</th>
+<th style="text-align: center;">max_pressure</th>
+<th style="text-align: center;">min_precip</th>
+<th style="text-align: center;">mean_precip</th>
+<th style="text-align: center;">max_precip</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">10.94</td>
+<td style="text-align: center;">55.26</td>
+<td style="text-align: center;">100.04</td>
+<td style="text-align: center;">983.8</td>
+<td style="text-align: center;">1017.9</td>
+<td style="text-align: center;">1042.1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1.21</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>In the code chunk mentioned above, typing out all the calls can be tedious, and the code can become repetitive. This is a sign that we should convert our code into a function. Fortunately, we can quickly achieve this by inserting arguments inside doubled braces.</p>
+<ul>
+<li>Converts the user supplied variable that uses clock time (e.g., dep_time, arr_time, etc.) into a decimal time (i.e.&nbsp;hours + (minutes / 60)).</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Solution</span></span>
+<span id="cb7-2">flights <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb7-3">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">select</span>(year<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span>sched_dep_time, arr_time, sched_arr_time) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb7-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(</span>
+<span id="cb7-5">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">hours =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">floor</span>(arr_time <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>),</span>
+<span id="cb7-6">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">minutes =</span> arr_time <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%%</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>,</span>
+<span id="cb7-7">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">decimal_time =</span> hours <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> (minutes <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">60</span>)</span>
+<span id="cb7-8">  )</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 336,776 × 10
+    year month   day dep_time sched_dep_time arr_time sched_arr_time hours
+   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;    &lt;int&gt;          &lt;int&gt; &lt;dbl&gt;
+ 1  2013     1     1      517            515      830            819     8
+ 2  2013     1     1      533            529      850            830     8
+ 3  2013     1     1      542            540      923            850     9
+ 4  2013     1     1      544            545     1004           1022    10
+ 5  2013     1     1      554            600      812            837     8
+ 6  2013     1     1      554            558      740            728     7
+ 7  2013     1     1      555            600      913            854     9
+ 8  2013     1     1      557            600      709            723     7
+ 9  2013     1     1      557            600      838            846     8
+10  2013     1     1      558            600      753            745     7
+# ℹ 336,766 more rows
+# ℹ 2 more variables: minutes &lt;dbl&gt;, decimal_time &lt;dbl&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Write a function</span></span>
+<span id="cb9-2">standardize_time <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">function</span>(data, time_var) {</span>
+<span id="cb9-3">  data <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb9-4">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(</span>
+<span id="cb9-5">      <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># floor division</span></span>
+<span id="cb9-6">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">hours =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">floor</span>({{ time_var }} <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>),</span>
+<span id="cb9-7">      <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># extracting the remainder</span></span>
+<span id="cb9-8">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">minutes =</span> {{ time_var }} <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%%</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>,</span>
+<span id="cb9-9">      <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Convert the remainder to minutes; combine the results; round to 2</span></span>
+<span id="cb9-10">      <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"{{time_var}}"</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span><span class="er" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">round</span>(hours <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> minutes <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">60</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)</span>
+<span id="cb9-11">    ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> </span>
+<span id="cb9-12">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Remove unnecessary columns</span></span>
+<span id="cb9-13">        <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">select</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>hours, <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>minutes)</span>
+<span id="cb9-14">}</span>
+<span id="cb9-15"></span>
+<span id="cb9-16"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># OR ---------------------------------------------------------------------</span></span>
+<span id="cb9-17"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># We could simplify it further, thanks to Zakarie Hashi for the suggestion</span></span>
+<span id="cb9-18">standardise_time <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">function</span>(data, time_var) {</span>
+<span id="cb9-19">  data <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb9-20">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(</span>
+<span id="cb9-21">      <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># floor division, extracting the remainder,Convert the remainder to minutes; combine the results; round to 2</span></span>
+<span id="cb9-22">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">decimal_time =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">round</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">floor</span>({{ time_var }} <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> ({{ time_var }} <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%%</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">60</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)</span>
+<span id="cb9-23">    )</span>
+<span id="cb9-24">}</span>
+<span id="cb9-25"></span>
+<span id="cb9-26"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Test the function</span></span>
+<span id="cb9-27">flights <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> </span>
+<span id="cb9-28">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">standardise_time</span>(arr_time) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> </span>
+<span id="cb9-29">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">slice_head</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">n =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>) </span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 20
+   year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
+  &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;
+1  2013     1     1      517            515         2      830            819
+2  2013     1     1      533            529         4      850            830
+3  2013     1     1      542            540         2      923            850
+4  2013     1     1      544            545        -1     1004           1022
+5  2013     1     1      554            600        -6      812            837
+# ℹ 12 more variables: arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;,
+#   tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;,
+#   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;, decimal_time &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p>As we demonstrated above, it is possible to complete this task with just one line of code, as suggested by Zakarie Hashi in a LinkedIn post from last year. In the function provided above, we utilized the floor() function to extract the hours and used modulo division to retrieve the remaining minutes. We then combined the outcomes and rounded our answer to two decimal places.</p>
+</section>
+<section id="conclusion" class="level1">
+<h1>Conclusion</h1>
+<p>In this tutorial, we have shown you how to answer selected practice problems from section 25.3.5 exercises in R for Data Science, 2nd edition by Wickham et al. We have demonstrated various approaches for solving these questions wherever possible. Although we have highlighted some ways to solve these exercises, there are many other methods available. We encourage you to try them out and share your answers with us and our readers.</p>
+<p><strong>Happy Coding</strong> 💪!</p>
+
+
+</section>
+
+ ]]></description>
+  <category>Data Science</category>
+  <category>R</category>
+  <category>Tutorial</category>
+  <guid>https://alierwaidatastudio.com/tutorials/posts/2023/11/11/tutorial-01.html</guid>
+  <pubDate>Sat, 11 Nov 2023 05:00:00 GMT</pubDate>
+  <media:content url="https://alierwaidatastudio.com/tutorials/posts/2023/11/11/images/tutorial-01-img.png" medium="image" type="image/png" height="178" width="144"/>
+</item>
+</channel>
+</rss>

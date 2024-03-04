@@ -1,0 +1,19 @@
+---
+title: "Data Science Training and Workshops"
+description: |
+  Funding decisions, particularly for projects in the public sector, should be informed by data on what works and what doesn’t. But performance assessment is rarely straightforward -- especially when people’s lives and livelihoods may be impacted by the decisions that are made. Data scientist Noah Wright recounts the trials and tribulations of managing and meeting stakeholder expectations in developing a performance measurement program for specialty courts in Texas. 
+categories:
+  - Data Science
+  - Training
+  - Services
+author: Alier Reng
+date: 12/27/2023
+image: images/crowd-of-voices.png
+image-alt: A crowd of people talking, with speech bubbles representing the different voices, digital art. Image created by Real World Data Science using Microsoft Bing Image Creator.
+toc: true
+draft: true
+---
+
+The constantly growing amount of health data and the lack of modern healthcare analytic infrastructure pose challenges to healthcare organizations in South Sudan to harness valuable insights from their data. NQI is dedicated to addressing this challenge by offering a well-tailored corporate and group training program to get these organizations up and running with cutting-edge open-source tools to derive valuable insights from their healthcare data.
+
+To achieve this, we collaborate with your data science team to better your data needs and formulate a strategic action plan, which we execute with a clear understanding of the deliverables. Whether your organization already has its favorite analytic software or not, NQI ensures your data science and analytics teams are proficient in using R or Python to derive meaningful insights from their data, which, in turn, can be used to make informed decisions to improve the quality of care. Our comprehensive training program courses range from basic to advanced, including data science environment setup, fundamentals of R or Python, data wrangling, visualization, and predictive analytics.

@@ -1,0 +1,88 @@
+project:
+  type: website
+
+website:
+  title: "Alierwai DataStudio"
+  image: images/logo.png
+  favicon: images/favicon.png
+  twitter-card:
+    site: ""
+  open-graph: true
+  site-url: https://alierwaidatastudio.com/
+  
+  google-analytics: "ua-164226979-1"
+  search:
+    location: navbar
+    type: textbox
+  reader-mode: false
+  
+  navbar:
+    pinned: true
+    logo: images/logo.png
+    logo-alt: "Alierwai DataStudio Brand"
+    title: false
+    collapse-below: lg
+    right:
+      - case-studies/index.qmd
+      #- text: "Our Services"
+        #href: services.qmd
+      - talks/index.qmd
+      - tutorials/index.qmd
+      - text: "About Us"
+        menu: 
+        - text: "About ADS"
+          href: about-us.qmd
+        - text: "Contact us"
+          href: contact.qmd
+        - text: "My Resume"
+          href: images/cv/areng.pdf
+  sidebar: 
+    - title: "About us"
+      contents:
+        - about-us.qmd
+        - contact.qmd
+        - ts-and-cs.qmd
+    - title: "Tutorials"
+      contents:
+        - tutorials/index.qmd
+
+  page-navigation: true
+
+  back-to-top-navigation: false
+
+  page-footer:
+    background: "#396E10"
+    left: |
+      Copyright &copy; 2024 [Alierwai DataStudio](https://alierwaidatastudio.com/). All rights reserved.
+    center:  
+      - href: https://github.com/tongakuot
+        icon: github
+        aria-label: GitHub
+      - href: https://facebook.com/nilequantuminsights
+        icon: facebook
+        aria-label: Facebook
+      - href: https://www.linkedin.com/in/tongakuot
+        icon: linkedin
+        aria-label: LinkedIn
+      - href: feeds.html
+        icon: rss
+        aria-label: NQI rss
+    right: |
+      [Terms & Conditions](/ts-and-cs.qmd)
+
+format:
+  html:
+    theme: [lux, ads.scss]
+    css: ads.css
+    toc: true
+    grid:
+      sidebar-width: 0px
+      body-width: 1000px
+      margin-width: 250px
+
+comments:
+  giscus: 
+      repo: tongakuot/comments
+      
+execute: 
+  freeze: auto

@@ -1,0 +1,21 @@
+---
+pagetitle: Tutorials | Alierwai DataStudio
+title: Tutorials
+subtitle: "Dive into the data universe with a data wizard and educator with extensive teaching experience! Uncover hidden insights from data cleaning to the depths of deep learning, all through the power of R and Python."
+search: false
+code-block-bg: true
+code-block-border-left: "#31BAE9"
+listing:
+  contents: 
+  - tutorials
+  - posts
+  - "!index.qmd"
+  sort: "date desc"
+  type: default
+  categories: true
+  sort-ui: false
+  filter-ui: false
+  page-size: 30
+  feed: true
+---
+Whether you're an aspiring data scientist/analyst or a seasoned data science professional, my data science tutorials are designed to improve your R and Python coding skills. I assist aspiring and accomplished data scientists by offering tailored content based on the most up-to-date coding best practices. I strive to get you up and running and empower you to excel in your data science pursuits. Explore my tutorials and join my vibrant community of learners dedicated to continuous skill improvement.

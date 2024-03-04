@@ -1,0 +1,7 @@
+include-in-header: 
+  - ../../progress-bar.html
+
+comments:
+  giscus: 
+      repo: tongakuot/comments
+      category: General

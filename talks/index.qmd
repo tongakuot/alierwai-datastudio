@@ -1,0 +1,19 @@
+---
+pagetitle: Talks | Alierwai DataStudio
+title: Talks
+subtitle: "ADS focuses on healthcare analytics, data science tutorials, statistics, and mathematics; it aims to inspire and empower individuals to enhance their skills and achieve their goals." 
+search: false 
+comments: false
+listing:
+  contents:
+  - talks 
+  - "!index.qmd"
+  sort: "date desc"
+  type: grid
+  categories: true
+  sort-ui: false
+  filter-ui: false
+  page-size: 30
+  feed: true
+---
+While ADS primarily focuses on healthcare analytics, data science tutorials, statistics, and mathematics, we extend our commitment to education through personalized tutoring and mentorship services. Our comprehensive tutoring program encompasses various statistics and mathematics courses, including plane trigonometry, college algebra, finite mathematics, mathematical ideas, calculus 1 and 2, pre-calculus, and data science with R and Python. At ADS, we believe in nurturing a learning environment beyond traditional boundaries, ensuring individuals have access to the support they need to excel in their academic and professional pursuits. 
