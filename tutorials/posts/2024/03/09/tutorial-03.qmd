@@ -259,7 +259,6 @@ In this tutorial, I demonstrated how to load **KyotoFullFlower7.xls**, clean and
 This simple recreation of the Our World In Data graphic has become a beautiful tutorial worthwhile for those interested in data visualization with the ggplot2 package.\
 My goal was to recreate the plot and help those new to R learn how to do the same thing.
 
-\
 Overall, this tutorial demonstrates how to recreate a visually informative plot showcasing the trend of cherry blossom flowering dates in Kyoto, Japan, with annotations and proper citation.\
 Please leave us a comment, share our tutorial, try it yourself, and share your work with me and the Data Science Community.
 
