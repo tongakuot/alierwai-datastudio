@@ -2,6 +2,7 @@
   {
     "listing": "/latest-articles.html",
     "items": [
+      "/tutorials/posts/2024/03/09/tutorial-03.html",
       "/tutorials/posts/2024/01/04/tutorial-02.html",
       "/case-studies/posts/2023/10/18/calgary_crime_analysis.html",
       "/tutorials/posts/2023/11/11/tutorial-01.html"
@@ -14,6 +15,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/tutorials/posts/2024/03/09/tutorial-03.html",
       "/tutorials/posts/2024/01/04/tutorial-02.html",
       "/case-studies/posts/2023/10/18/calgary_crime_analysis.html",
       "/tutorials/posts/2023/11/11/tutorial-01.html"
@@ -28,6 +30,7 @@
   {
     "listing": "/tutorials/index.html",
     "items": [
+      "/tutorials/posts/2024/03/09/tutorial-03.html",
       "/tutorials/posts/2024/01/04/tutorial-02.html",
       "/tutorials/posts/2023/11/11/tutorial-01.html"
     ]
