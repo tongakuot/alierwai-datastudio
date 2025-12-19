@@ -1,9 +1,0 @@
----
-title: "Terms and conditions"
-page-layout: article
-sidebar: false
-toc: true
-title-block-banner: true
----
-## Legal disclaimer
-The statements published on this blog reflect my personal views and opinions, not my employer's.

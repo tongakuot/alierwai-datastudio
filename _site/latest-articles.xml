@@ -31,7 +31,8 @@
 <p>The greatest value of a picture is when it forces us to notice what we never expected to see. ~ John Tukey</p>
 </blockquote>
 <p>Yesterday, Matt Harrison shared his recreation of Our World In Data’s graphical trend of Kyoto’s Cherry trees blossoming, encouraging other data scientists and analysts to try it out to enhance their visualization skills.<br>
-<br>
+</p>
+<p><br>
 In my humble opinion, replicating others’ work is an effective learning strategy. As a result, this tutorial aims to recreate an intriguing visual by Our World in Data. My objective is to practice and improve my visualization skills and help those new to R programming and the ggplot2 library (I could have done this with the pandas and seaborn libraries; however, I am more comfortable with the ggplot2).</p>
 </section>
 <section id="getting-started" class="level1">
@@ -722,7 +723,7 @@ font-style: inherit;">15</span>)</span>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="tutorial-03_files/figure-html/unnamed-chunk-5-1.png" class="lightbox" title="Kyoto Cherry trees trend since 812" data-gallery="quarto-lightbox-gallery-1"><img src="https://alierwaidatastudio.com/tutorials/posts/2024/03/09/tutorial-03_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="1056"></a></p>
+<p><a href="tutorial-03_files/figure-html/unnamed-chunk-5-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Kyoto Cherry trees trend since 812"><img src="https://alierwaidatastudio.com/tutorials/posts/2024/03/09/tutorial-03_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="1056"></a></p>
 <figcaption class="figure-caption">Kyoto Cherry trees trend since 812</figcaption>
 </figure>
 </div>

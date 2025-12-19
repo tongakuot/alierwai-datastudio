@@ -25,8 +25,8 @@ editor: visual
 > The greatest value of a picture is when it forces us to notice what we never expected to see.
 > \~ John Tukey
 
-Yesterday, Matt Harrison shared his recreation of Our World In Data's graphical trend of Kyoto's Cherry trees blossoming, encouraging other data scientists and analysts to try it out to enhance their visualization skills.
-\
+Yesterday, Matt Harrison shared his recreation of Our World In Data's graphical trend of Kyoto's Cherry trees blossoming, encouraging other data scientists and analysts to try it out to enhance their visualization skills.\
+
 \
 In my humble opinion, replicating others' work is an effective learning strategy.
 As a result, this tutorial aims to recreate an intriguing visual by Our World in Data.
@@ -93,12 +93,10 @@ cherry_raw <-
 In the code snippet above, I used the `read_excel()` function from the `readxl` package to read the **KyotoFullFlower7.xls** dataset.
 I then skipped the first **25** rows with the `skip()` argument, converted column names to `snakecase` using the `clean_names()` function from the `janitor` package, and selected and renamed the columns of interest with the `select()` function from the `dplyr` package.
 
-
 After that, I created a new column named "date" by combining the year with the month and day portions of the "flowering_month" column.
 I used the `str_c()` and `str_sub()` functions from the `stringr` package for this purpose.
 The new column values were separated by a hyphen ("-") to look like "year-month-day," for example, "815-4-15".
 Then, I removed missing or NA values from the new date column using the `filter()` function from the dplyr package.
-
 
 Finally, I calculated the mean "rolling_day_of_year" with the `slide_dbl()` function from the `slider` package.
 I used a *20-year window* and the values were calculated from the **flowering_day_of_year**.
@@ -244,7 +242,6 @@ To do this, I used the `geom_point()` function and set the point size to 0.8.
 I also plotted a line graph of the 20-year rolling average using the `geom_line()` function.
 I made the line thicker and colored it in purplish color.
 I added a text label "20-year average" using the `annotate()` function and modified its location, color, and size as shown above.
-
 
 To make the plot resemble that of Our World In Data graph, I controlled the axes by setting the limits, breaks, and labels accordingly.
 I used **Matt Harrison's** code along with the original graph as a guide.
