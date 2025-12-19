@@ -1,0 +1,18 @@
+---
+title: "Poetry"
+subtitle: "Verses born from ash and starlight"
+listing:
+  contents: poems
+  sort: "date desc"
+  type: grid
+  categories: true
+  sort-ui: true
+  filter-ui: true
+  feed: true
+page-layout: full
+title-block-banner: true
+---
+
+Words that dance on the edge of silence. Poetry that rises from the ashes of experience, reaching toward something eternal.
+
+---

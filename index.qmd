@@ -1,60 +1,59 @@
 ---
-pagetitle: "Alierwai DataStudio"
+pagetitle: "The Living Dead | Born again in the fire of memory"
 page-layout: custom
 section-divs: false
 editor: source
 sidebar: false
 search: false
-description: | 
-  Through continuous self-development, we can unlock the potential for true independence. By staying resilient and focused on our passions, we have the power to achieve our goals and reach new heights.
+description: |
+  The Living Dead is a collection of short stories, poetry, and fiction by Alier Reng. Born again in the fire of memory, these works explore identity, displacement, resilience, and the eternal flame of hope.
 image: images/logo.png
 comments: false
 listing:
-  - id: latest-articles
-    contents: 
-    - /case-studies
-    - /tutorials
-    - /talks
-    - "!index.qmd"
-    sort: "date desc"
-    type: grid
-    categories: false
-    sort-ui: false
-    filter-ui: false
-    max-items: 3
-    feed: false
-
-  - id: case-studies
-    contents: 
-    - /case-studies
-    - "!index.qmd"
-    sort: "date desc"
-    type: grid
-    categories: false
-    sort-ui: false
-    filter-ui: false
-    max-items: 3
-    feed: false
-
-  - id: tutorials
-    contents: 
-    - /tutorials
-    - "!index.qmd"
-    - "!dsb-live.qmd"
-    sort: "date desc"
-    type: grid
-    categories: false
-    sort-ui: false
-    filter-ui: false
-    max-items: 3
-    feed: false
-
-  - id: talks
+  - id: latest-writings
     contents:
-    - /talks
+    - /short-stories
+    - /poetry
+    - /fiction
     - "!index.qmd"
     sort: "date desc"
     type: grid
+    categories: false
+    sort-ui: false
+    filter-ui: false
+    max-items: 3
+    feed: false
+
+  - id: short-stories
+    contents:
+    - /short-stories
+    - "!index.qmd"
+    sort: "date desc"
+    type: grid
+    categories: false
+    sort-ui: false
+    filter-ui: false
+    max-items: 3
+    feed: false
+
+  - id: poetry
+    contents:
+    - /poetry
+    - "!index.qmd"
+    sort: "date desc"
+    type: grid
+    categories: false
+    sort-ui: false
+    filter-ui: false
+    max-items: 3
+    feed: false
+
+  - id: fiction
+    contents:
+    - /fiction
+    - "!index.qmd"
+    sort: "date desc"
+    type: default
     categories: false
     sort-ui: false
     filter-ui: false
@@ -64,162 +63,164 @@ listing:
 toc: false
 ---
 
-::: content-container
+::: {.hero-section}
+::: {.hero-container}
+::: {.hero-content}
+
+# The Living Dead {.hero-title}
+
+::: {.hero-tagline}
+Born again in the fire of memory
 :::
 
-::: header-text
-::: content-container
-::: header-block
-Welcome to **Alierwai DataStudio** – a platform for knowledge sharing and continuous learning.
-With a focus on data science tutorials, statistics, and mathematics, it aims to inspire and empower individuals to enhance their skills and achieve their goals.
-
-# Reflecting on the Past to Illuminate the Future
-
-::: columns
-::: {.column width="100%"}
-In 1996, after triumphantly passing the Kenyan Certificate of Primary Examination (KCPE), my friends and I seized a memorable moment at the home of Mwalimu Benson Chege Njuguna in Kakuma town.
-We immortalized the event with a photograph, encapsulating our educational accomplishments and the nurturing environment that fostered our growth.
-
-During our time in Kakuma refugee camp, we were characterized by an unyielding drive to succeed, fueled by a fiery passion that ignited our spirits.
-Despite numerous adversities, we pursued academic excellence, devoting ourselves wholeheartedly to our studies.
-Through tenacity and persistence, we defied the odds and actualized our aspirations.
+::: {.hero-description}
+Stories, poetry, and fiction that emerge from the space between worlds — where memory meets myth, where loss becomes legacy, and where the fire of resilience illuminates the path forward.
 :::
 
-::: {.column width="5%"}
+::: {.hero-cta}
+[Explore Stories](/short-stories/){.btn-primary} [Read Poetry](/poetry/){.btn-secondary}
 :::
 
-::: {.column width="90%"}
-![Standing from left to right: David Ajang Ajak, Alier Reng, Philip Abui de Jupiny, James Yach Garang, William Magot Mareng, Mwalium Benson Chege, Jacob Magai Majok; Sitting in front: Dr. James yai Atem, Abraham Majak Mach, Abraham Maketh Atem, Benjamin Lem Ater, and Prof. Abraham Kuol Nyuon.](images/alier_n_colleagues.png)
-:::
-
-::: {.column width="5%"}
-:::
-
-::: {.column width="100%"}
-Our journey stands as a testament to the transformative potential of passion and commitment.
-We discovered that true success transcends mere physical sustenance; it entails nurturing the soul with a steadfast spirit and unwavering focus.
-This invaluable lesson has accompanied us throughout our lives, motivating us to consistently strive for greater achievements and inspire others to follow suit.
-
-Honoring our heritage and expressing gratitude for our blessings can take many forms, but one of the most meaningful ways to do so is by maintaining a resolute focus on our goals while extending compassion and aid to those in need.
-By directing our energies toward constructive pursuits and supporting others, we not only honor our past but also contribute to the growth and well-being of our communities.
-:::
-:::
 :::
 :::
 :::
 
-::: content-container
-::: listing-block
-<a href="latest-articles.qmd">
+::: {.content-container}
+::: {.intro-section}
 
-## Latest Articles
+## The Fire Within
+
+In the refugee camps of East Africa, stories were our survival. They traveled with us across borders, through loss and displacement, carrying the voices of those who could no longer speak. These writings are an act of resurrection — bringing back to life the memories, the people, and the places that shaped us.
+
+**The Living Dead** is not about death. It is about the persistence of memory, the refusal to be forgotten, and the transformative power of storytelling. Every word is a ember from the fire that forged us.
+
+:::
+:::
+
+::: {.pullout-text}
+::: {.pullout-container}
+::: {.pullout-block .fire-background}
+
+## "We carry our dead with us, not as burdens, but as flames that light our way through the darkness."
+
+:::
+:::
+:::
+
+::: {.content-container}
+::: {.listing-block}
+<a href="short-stories/index.qmd">
+
+## Short Stories
 
 </a>
 
-::: {#latest-articles}
+Tales of memory, identity, and the spaces between worlds.
+
+::: {#short-stories}
 :::
 :::
 :::
 
-::: pullout-text
-::: pullout-container
-::: {.pullout-block .black-background}
-![](images/quote-green.png){width="100px"}
+::: {.pullout-text}
+::: {.pullout-container}
+::: {.pullout-block .memory-background}
 
-## The greatest value of a picture is when it forces us to notice what we never expected to see.
+## "In every story I tell, there are a hundred voices speaking — the living and the dead, all finding their way back to the light."
 
-John Tukey
 :::
 :::
 :::
 
-::: content-container
-::: listing-block
-<a href="case-studies/index.qmd">
+::: {.content-container}
+::: {.listing-block}
+<a href="poetry/index.qmd">
 
-## Case Studies
+## Poetry
 
 </a>
 
-::: {#case-studies}
+Verses that rise from ash and reach toward starlight.
+
+::: {#poetry}
 :::
 :::
 :::
 
-::: pullout-text
-::: pullout-container
-::: {.pullout-block .black-background}
-![](images/quote-green.png){width="100px"}
+::: {.pullout-text}
+::: {.pullout-container}
+::: {.pullout-block .fire-background}
 
-## Through continuous self-development, we can unlock the potential for true independence. By staying resilient and focused on our passions, we have the power to achieve our goals and reach new heights.
+## "The fire of memory does not destroy — it transforms. What was lost becomes legend. What was pain becomes purpose."
 
-Alier Reng
 :::
 :::
 :::
 
-::: content-container
-::: listing-block
-<a href="tutorials/index.qmd">
+::: {.content-container}
+::: {.listing-block}
+<a href="fiction/index.qmd">
 
-## Tutorials
-
-</a>
-
-::: {#tutorials}
-:::
-:::
-:::
-
-::: pullout-text
-::: pullout-container
-::: {.pullout-block .black-background}
-![](images/quote-green.png){width="100px"}
-
-## There is no limit to what a man can do or where he can go if he doesn't mind who gets the credit.
-
-Pres.
-Ronald Reagan
-:::
-:::
-:::
-
-::: content-container
-::: listing-block
-<a href="talks/index.qmd">
-
-## Talks
+## Fiction
 
 </a>
 
-::: {#talks}
+Longer journeys into the territories where memory meets myth.
+
+::: {#fiction}
 :::
 :::
 :::
 
-::: footer-text
-::: {.footer-container .black-background}
-::: footer-block
-::: grid
+::: {.about-preview}
+::: {.content-container}
+::: {.about-block}
+
+## About the Author
+
+**Alier Reng** is a writer whose work explores themes of displacement, memory, identity, and resilience. Born in South Sudan and raised in the refugee camps of Kenya, his writing draws from the rich oral traditions of his Dinka heritage and the transformative experience of the diaspora.
+
+His stories give voice to the living and the dead, weaving together personal history with collective memory to create narratives that illuminate the human capacity for hope in the face of unimaginable loss.
+
+[Learn More](/about.qmd){.btn-about}
+
+:::
+:::
+:::
+
+::: {.footer-section}
+::: {.footer-container}
+::: {.footer-block}
+::: {.grid}
 ::: {.g-col-12 .g-col-md-6}
-[![](images/logo.png){fig-align="left" width="150"}](https://alierwai.org/)
 
-ADS is a platform for knowledge sharing and continuous learning.
-With a focus on data science tutorials, statistics, and mathematics, it aims to inspire and empower individuals to enhance their skills and achieve their goals.
+### The Living Dead
+
+Born again in the fire of memory. A collection of short stories, poetry, and fiction exploring identity, displacement, and the transformative power of storytelling.
+
 :::
 
 ::: {.g-col-12 .g-col-md-2}
 :::
 
 ::: {.g-col-12 .g-col-md-2}
+
+### Navigate
+
+[Short Stories](/short-stories/)\
+[Poetry](/poetry/)\
+[Fiction](/fiction/)
+
 :::
 
 ::: {.g-col-12 .g-col-md-2}
-### About us
 
-[Who we are](about-us.qmd)\
-[Contact us](contact.qmd)\
-[My Resume](images/cv/areng.pdf)
+### Connect
+
+[About](/about.qmd)\
+[Contact](/contact.qmd)\
+[RSS Feed](/feeds.html)
+
 :::
 :::
 :::

@@ -2,59 +2,52 @@ project:
   type: website
 
 website:
-  title: "Alierwai DataStudio"
+  title: "The Living Dead"
+  description: "Born again in the fire of memory - Short stories, poetry, and fiction by Alier Reng"
   image: images/logo.png
   favicon: images/favicon.png
   twitter-card:
-    site: ""
+    site: "@alierwai"
+    card-style: summary_large_image
   open-graph: true
-  site-url: https://alierwaidatastudio.com/
-  
+  site-url: https://alierwai-the-living-dead.com/
+
   google-analytics: "ua-164226979-1"
   search:
     location: navbar
-    type: textbox
-  reader-mode: false
-  
+    type: overlay
+  reader-mode: true
+
   navbar:
     pinned: true
     logo: images/logo.png
-    logo-alt: "Alierwai DataStudio Brand"
+    logo-alt: "The Living Dead - Creative Writing"
     title: false
     collapse-below: lg
+    background: transparent
     right:
-      - case-studies/index.qmd
-      #- text: "Our Services"
-        #href: services.qmd
-      - talks/index.qmd
-      - tutorials/index.qmd
-      - text: "About Us"
-        menu: 
-        - text: "About ADS"
-          href: about-us.qmd
-        - text: "Contact us"
+      - text: "Short Stories"
+        href: short-stories/index.qmd
+      - text: "Poetry"
+        href: poetry/index.qmd
+      - text: "Fiction"
+        href: fiction/index.qmd
+      - text: "About"
+        menu:
+        - text: "About the Author"
+          href: about.qmd
+        - text: "Contact"
           href: contact.qmd
-        - text: "My Resume"
-          href: images/cv/areng.pdf
-  sidebar: 
-    - title: "About us"
-      contents:
-        - about-us.qmd
-        - contact.qmd
-        - ts-and-cs.qmd
-    - title: "Tutorials"
-      contents:
-        - tutorials/index.qmd
 
   page-navigation: true
 
-  back-to-top-navigation: false
+  back-to-top-navigation: true
 
   page-footer:
-    background: "#396E10"
+    background: "#0a0a0f"
     left: |
-      Copyright &copy; 2024 [Alierwai DataStudio](https://alierwaidatastudio.com/). All rights reserved.
-    center:  
+      Copyright &copy; 2025 [The Living Dead](https://alierwai-the-living-dead.com/). All rights reserved.
+    center:
       - href: https://github.com/tongakuot
         icon: github
         aria-label: GitHub
@@ -66,14 +59,14 @@ website:
         aria-label: LinkedIn
       - href: feeds.html
         icon: rss
-        aria-label: NQI rss
+        aria-label: RSS Feed
     right: |
-      [Terms & Conditions](/ts-and-cs.qmd)
+      Born again in the fire of memory
 
 format:
   html:
-    theme: [lux, ads.scss]
-    css: ads.css
+    theme: [lux, theme.scss]
+    include-in-header: progress-bar.html
     toc: true
     grid:
       sidebar-width: 0px

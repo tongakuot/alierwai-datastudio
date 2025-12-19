@@ -1,0 +1,94 @@
+---
+title: "About the Author"
+subtitle: "The fire that forged these stories"
+sidebar: false
+comments: false
+page-layout: article
+toc: true
+title-block-banner: true
+---
+
+## The Writer
+
+**Alier Reng** is a writer whose work emerges from the intersection of memory and imagination, loss and resilience, displacement and homecoming. His stories, poems, and fiction explore the landscapes of the South Sudanese diaspora experience — the refugee camps that became crucibles of hope, the journeys across continents, and the eternal pull of a homeland that lives in the heart.
+
+::: columns
+::: {.column width="70%"}
+Born in South Sudan during a time of civil war, Alier's early years were shaped by displacement and the search for safety. In the refugee camps of Kenya, he discovered the power of stories — not just as entertainment, but as survival. The oral traditions of his Dinka heritage merged with the written word, creating a unique voice that honors both.
+
+His writing gives voice to the living and the dead, weaving together personal history with collective memory. Each story is an act of resurrection, bringing back to life the people, places, and moments that might otherwise be lost to time.
+
+**The Living Dead** is not about death. It is about the persistence of memory, the refusal to be forgotten, and the transformative power of storytelling. The title speaks to all of us who carry our ancestors within us, who feel the presence of those who have passed, and who understand that the fire of memory never truly goes out.
+:::
+
+::: {.column width="5%"}
+:::
+
+::: {.column width="25%"}
+![Alier Reng](images/areng.jpg){fig-align="right"}
+:::
+:::
+
+---
+
+## The Journey
+
+In 1996, after triumphantly passing the Kenyan Certificate of Primary Examination (KCPE), my friends and I seized a memorable moment at the home of Mwalimu Benson Chege Njuguna in Kakuma town. We immortalized the event with a photograph, encapsulating our educational accomplishments and the nurturing environment that fostered our growth.
+
+During our time in Kakuma refugee camp, we were characterized by an unyielding drive to succeed, fueled by a fiery passion that ignited our spirits. Despite numerous adversities, we pursued academic excellence, devoting ourselves wholeheartedly to our studies. Through tenacity and persistence, we defied the odds and actualized our aspirations.
+
+![Standing from left to right: David Ajang Ajak, Alier Reng, Philip Abui de Jupiny, James Yach Garang, William Magot Mareng, Mwalium Benson Chege, Jacob Magai Majok; Sitting in front: Dr. James yai Atem, Abraham Majak Mach, Abraham Maketh Atem, Benjamin Lem Ater, and Prof. Abraham Kuol Nyuon.](images/alier_n_colleagues.png)
+
+Our journey stands as a testament to the transformative potential of passion and commitment. We discovered that true success transcends mere physical sustenance; it entails nurturing the soul with a steadfast spirit and unwavering focus. This invaluable lesson has accompanied us throughout our lives, motivating us to consistently strive for greater achievements and inspire others to follow suit.
+
+---
+
+## The Craft
+
+My writing draws from multiple wells:
+
+- **Dinka oral traditions** — the stories told around fires, passed down through generations
+- **The refugee experience** — displacement, resilience, and the search for belonging
+- **The diaspora journey** — navigating between worlds, carrying multiple identities
+- **Faith and spirituality** — the role of belief in sustaining hope through darkness
+- **Family and community** — the bonds that persist across distance and time
+
+I write to remember. I write to honor. I write to transform pain into purpose and loss into legacy.
+
+---
+
+## My Family
+
+My wife, Angeth, my son, Akuien, and my daughter, Ayen, are the pillars of my creative life. They provide unwavering support and motivation that keeps me writing, no matter the circumstances. The stories I tell are ultimately for them — a bridge between past and future, between the homeland they may never know and the heritage that lives within them.
+
+::: columns
+::: {.column width="30%"}
+![My wife - Angeth Deng Garang](images/angeth.jpg){fig-align="left" width="350"}
+:::
+
+::: {.column width="8%"}
+:::
+
+::: {.column width="30%"}
+![My son - Akuien Alier Reng](images/akuien.jpg){fig-align="left" width="240"}
+:::
+
+::: {.column width="2%"}
+:::
+
+::: {.column width="30%"}
+![My daughter - Ayen Alier Reng](images/ayen_alier.png){fig-align="left" width="226"}
+:::
+:::
+
+---
+
+> "We carry our dead with us, not as burdens, but as flames that light our way through the darkness."
+
+---
+
+## Connect
+
+I welcome readers, fellow writers, and anyone interested in the stories of the South Sudanese diaspora. You can reach me through the [contact page](/contact.qmd) or connect with me on social media.
+
+For those interested in my professional background in data science and healthcare analytics, please visit [Alierwai DataStudio](https://alierwaidatastudio.com/).

@@ -1,0 +1,31 @@
+# Metadata for Poetry section
+freeze: true
+
+# Default settings for all poems
+author: "Alier Reng"
+date-format: "MMMM D, YYYY"
+
+# Layout
+page-layout: article
+title-block-banner: false
+toc: false
+
+# Reading experience
+reader-mode: true
+smooth-scroll: true
+
+# Comments
+comments:
+  giscus:
+    repo: tongakuot/comments
+    category: "General"
+    mapping: "pathname"
+
+# Categories for poems
+categories:
+  - Poetry
+  - Memory
+  - Loss
+  - Hope
+  - Identity
+  - Home

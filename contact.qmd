@@ -1,13 +1,20 @@
 ---
-title: "Contact us"
+title: "Contact"
+subtitle: "Let's connect"
 sidebar: false
 comments: false
 page-layout: article
 toc: false
 title-block-banner: true
 ---
-## Connect with Us
-At ADS, our goal is to provide you with the essential skills necessary to advance your data science career. We understand that navigating through the vast amount of data science content available online can be overwhelming, and that’s why we strive to help you identify relevant and valuable information to achieve your goals. To become a successful data scientist or analyst, you need guidance and mentorship from industry experts who have demonstrated their abilities on real-world data science projects. At ADS, we offer you the opportunity to explore your potential and embark on a journey toward a fulfilling career in data science.
+
+## Reach Out
+
+I welcome connections with readers, fellow writers, publishers, and anyone interested in the stories of the South Sudanese diaspora. Whether you have feedback on my writing, questions about my work, or opportunities to collaborate, I'd love to hear from you.
+
+---
+
+## Connect
 
 **Email:** [info@alierwaidatastudio.com](mailto:info@alierwaidatastudio.com)
 
@@ -17,3 +24,14 @@ At ADS, our goal is to provide you with the essential skills necessary to advanc
 
 **LinkedIn:** [@tongakuot](https://www.linkedin.com/in/tongakuot)
 
+---
+
+## For Writers
+
+If you are a writer from the South Sudanese diaspora — or any diaspora — and would like to share your work or collaborate on projects exploring themes of memory, displacement, and resilience, please reach out. There are many stories that need to be told, and many voices that deserve to be heard.
+
+---
+
+> "The fire of memory connects us all. Every story shared is a spark that can ignite another."
+
+---
